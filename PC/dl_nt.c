@@ -76,6 +76,13 @@ void _Py_DeactivateActCtx(ULONG_PTR cookie)
             OutputDebugString("Python failed to de-activate the activation context\n");
 }
 
+void myInvalidParameterHandler(const wchar_t* expression,
+  const wchar_t* function,
+  const wchar_t* file,
+  unsigned int line,
+  uintptr_t pReserved)
+{
+}
 BOOL    WINAPI  DllMain (HANDLE hInst,
                                                 ULONG ul_reason_for_call,
                                                 LPVOID lpReserved)
@@ -87,6 +94,7 @@ BOOL    WINAPI  DllMain (HANDLE hInst,
             // 1000 is a magic number I picked out of the air.  Could do with a #define, I spose...
             LoadString(hInst, 1000, dllVersionBuffer, sizeof(dllVersionBuffer));
 
+            _set_invalid_parameter_handler(myInvalidParameterHandler);
             // and capture our activation context for use when loading extensions.
             _LoadActCtxPointers();
             if (pfnGetCurrentActCtx && pfnAddRefActCtx)
