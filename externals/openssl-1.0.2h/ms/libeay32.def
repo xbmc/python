@@ -1142,25 +1142,14 @@ EXPORTS
     ENGINE_get_static_state                 @3393
     ENGINE_get_table_flags                  @3143
     ENGINE_init                             @2475
-    ENGINE_load_4758cca                     @3218
-    ENGINE_load_aep                         @3210
-    ENGINE_load_atalla                      @3130
     ENGINE_load_builtin_engines             @2708
-    ENGINE_load_capi                        @4047
-    ENGINE_load_chil                        @3075
     ENGINE_load_cryptodev                   @2617
-    ENGINE_load_cswift                      @3027
     ENGINE_load_dynamic                     @2547
-    ENGINE_load_gost                        @4198
-    ENGINE_load_nuron                       @3055
     ENGINE_load_openssl                     @2657
-    ENGINE_load_padlock                     @3532
     ENGINE_load_private_key                 @2498
     ENGINE_load_public_key                  @2479
     ENGINE_load_rdrand                      @4640
     ENGINE_load_ssl_client_cert             @4046
-    ENGINE_load_sureware                    @3211
-    ENGINE_load_ubsec                       @2636
     ENGINE_new                              @2515
     ENGINE_pkey_asn1_find_str               @4282
     ENGINE_register_DH                      @2584
@@ -1612,14 +1601,9 @@ EXPORTS
     EVP_get_cipherbyname                    @315
     EVP_get_digestbyname                    @316
     EVP_get_pw_prompt                       @317
-    EVP_idea_cbc                            @318
-    EVP_idea_cfb64                          @319
-    EVP_idea_ecb                            @320
-    EVP_idea_ofb                            @321
     EVP_md4                                 @2438
     EVP_md5                                 @323
     EVP_md_null                             @324
-    EVP_mdc2                                @942
     EVP_rc2_40_cbc                          @959
     EVP_rc2_64_cbc                          @1103
     EVP_rc2_cbc                             @325
@@ -1721,10 +1705,6 @@ EXPORTS
     MD5_Init                                @341
     MD5_Transform                           @1011
     MD5_Update                              @342
-    MDC2                                    @343
-    MDC2_Final                              @344
-    MDC2_Init                               @345
-    MDC2_Update                             @346
     NAME_CONSTRAINTS_check                  @4494
     NAME_CONSTRAINTS_free                   @3338
     NAME_CONSTRAINTS_it                     @3350
@@ -3628,14 +3608,6 @@ EXPORTS
     i2v_ASN1_BIT_STRING                     @3639
     i2v_GENERAL_NAMES                       @1219
     i2v_GENERAL_NAME                        @1230
-    idea_cbc_encrypt                        @879
-    idea_cfb64_encrypt                      @880
-    idea_ecb_encrypt                        @881
-    idea_encrypt                            @882
-    idea_ofb64_encrypt                      @883
-    idea_options                            @884
-    idea_set_decrypt_key                    @885
-    idea_set_encrypt_key                    @886
     lh_delete                               @887
     lh_doall                                @888
     lh_doall_arg                            @889

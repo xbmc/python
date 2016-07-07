@@ -34,3 +34,6 @@
 *.user
 *.VC.db
 *.VC.opendb
+.vs/
+PCbuild/obj/
+PCbuild/amd64/

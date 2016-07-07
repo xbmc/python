@@ -16,9 +16,9 @@ INSTALLTOP=\usr\local\ssl
 OPENSSLDIR=\usr\local\ssl
 
 # Set your compiler options
-PLATFORM=VC-WIN64A
+PLATFORM=VC-WIN32
 CC=cl
-CFLAG= /MD /Ox -DOPENSSL_THREADS  -DDSO_WIN32 -W3 -Gs0 -Gy -nologo -DOPENSSL_SYSNAME_WIN32 -DWIN32_LEAN_AND_MEAN -DL_ENDIAN -DUNICODE -D_UNICODE -D_CRT_SECURE_NO_DEPRECATE -DOPENSSL_IA32_SSE2 -DOPENSSL_BN_ASM_MONT -DOPENSSL_BN_ASM_MONT5 -DOPENSSL_BN_ASM_GF2m -DSHA1_ASM -DSHA256_ASM -DSHA512_ASM -DMD5_ASM -DAES_ASM -DVPAES_ASM -DBSAES_ASM -DWHIRLPOOL_ASM -DGHASH_ASM -DECP_NISTZ256_ASM -DOPENSSL_USE_APPLINK -I. -DOPENSSL_NO_RC5 -DOPENSSL_NO_MD2 -DOPENSSL_NO_SSL2 -DOPENSSL_NO_KRB5 -DOPENSSL_NO_JPAKE -DOPENSSL_NO_WEAK_SSL_CIPHERS -DOPENSSL_NO_DYNAMIC_ENGINE    
+CFLAG= /MD /Ox /O2 /Ob2 -DOPENSSL_THREADS  -DDSO_WIN32 -W3 -Gs0 -GF -Gy -nologo -DOPENSSL_SYSNAME_WIN32 -DWIN32_LEAN_AND_MEAN -DL_ENDIAN -D_CRT_SECURE_NO_DEPRECATE -DOPENSSL_BN_ASM_PART_WORDS -DOPENSSL_IA32_SSE2 -DOPENSSL_BN_ASM_MONT -DOPENSSL_BN_ASM_GF2m -DSHA1_ASM -DSHA256_ASM -DSHA512_ASM -DMD5_ASM -DRMD160_ASM -DAES_ASM -DVPAES_ASM -DWHIRLPOOL_ASM -DGHASH_ASM -DOPENSSL_USE_APPLINK -I. -DOPENSSL_NO_IDEA -DOPENSSL_NO_RC5 -DOPENSSL_NO_MD2 -DOPENSSL_NO_MDC2 -DOPENSSL_NO_SSL2 -DOPENSSL_NO_KRB5 -DOPENSSL_NO_JPAKE -DOPENSSL_NO_WEAK_SSL_CIPHERS -DOPENSSL_NO_STATIC_ENGINE    
 APP_CFLAG= /Zi /Fd$(TMP_D)/app
 LIB_CFLAG= /Zi /Fd$(TMP_D)/lib -D_WINDLL
 SHLIB_CFLAG=
@@ -50,7 +50,7 @@ RANLIB=
 MKDIR=$(PERL) util/mkdir-p.pl
 MKLIB=lib /nologo
 MLFLAGS= /nologo /subsystem:console /opt:ref /debug /dll
-ASM=ml64 /c /Cp /Cx /Zi
+ASM=nasm -f win32
 
 # FIPS validated module and support file locations
 
@@ -117,65 +117,64 @@ HEADER=$(INCL_D)\e_os.h \
 	$(INCL_D)\sha_locl.h $(INCL_D)\rmd_locl.h $(INCL_D)\rmdconst.h \
 	$(INCL_D)\des_locl.h $(INCL_D)\rpc_des.h $(INCL_D)\spr.h \
 	$(INCL_D)\des_ver.h $(INCL_D)\rc2_locl.h $(INCL_D)\rc4_locl.h \
-	$(INCL_D)\idea_lcl.h $(INCL_D)\bf_pi.h $(INCL_D)\bf_locl.h \
-	$(INCL_D)\cast_s.h $(INCL_D)\cast_lcl.h $(INCL_D)\aes_locl.h \
-	$(INCL_D)\cmll_locl.h $(INCL_D)\seed_locl.h $(INCL_D)\modes_lcl.h \
-	$(INCL_D)\bn_lcl.h $(INCL_D)\bn_prime.h $(INCL_D)\dsa_locl.h \
-	$(INCL_D)\ec_lcl.h $(INCL_D)\ech_locl.h $(INCL_D)\ecs_locl.h \
-	$(INCL_D)\bio_lcl.h $(INCL_D)\obj_dat.h $(INCL_D)\obj_xref.h \
-	$(INCL_D)\evp_locl.h $(INCL_D)\asn1_locl.h $(INCL_D)\vpm_int.h \
-	$(INCL_D)\pcy_int.h $(INCL_D)\cms_lcl.h $(INCL_D)\conf_def.h \
-	$(INCL_D)\ui_locl.h $(INCL_D)\wp_locl.h $(INCL_D)\ssl_locl.h \
-	$(INCL_D)\kssl_lcl.h $(INCL_D)\apps.h $(INCL_D)\progs.h \
-	$(INCL_D)\s_apps.h $(INCL_D)\testdsa.h $(INCL_D)\testrsa.h \
-	$(INCL_D)\e_4758cca_err.c $(INCL_D)\e_4758cca_err.h $(INCL_D)\e_aep_err.c \
-	$(INCL_D)\e_aep_err.h $(INCL_D)\e_atalla_err.c $(INCL_D)\e_atalla_err.h \
-	$(INCL_D)\e_cswift_err.c $(INCL_D)\e_cswift_err.h $(INCL_D)\e_gmp_err.c \
-	$(INCL_D)\e_gmp_err.h $(INCL_D)\e_chil_err.c $(INCL_D)\e_chil_err.h \
-	$(INCL_D)\e_nuron_err.c $(INCL_D)\e_nuron_err.h $(INCL_D)\e_sureware_err.c \
-	$(INCL_D)\e_sureware_err.h $(INCL_D)\e_ubsec_err.c $(INCL_D)\e_ubsec_err.h \
-	$(INCL_D)\e_capi_err.c $(INCL_D)\e_capi_err.h $(INCL_D)\testutil.h 
+	$(INCL_D)\bf_pi.h $(INCL_D)\bf_locl.h $(INCL_D)\cast_s.h \
+	$(INCL_D)\cast_lcl.h $(INCL_D)\aes_locl.h $(INCL_D)\cmll_locl.h \
+	$(INCL_D)\seed_locl.h $(INCL_D)\modes_lcl.h $(INCL_D)\bn_lcl.h \
+	$(INCL_D)\bn_prime.h $(INCL_D)\dsa_locl.h $(INCL_D)\ec_lcl.h \
+	$(INCL_D)\ech_locl.h $(INCL_D)\ecs_locl.h $(INCL_D)\bio_lcl.h \
+	$(INCL_D)\obj_dat.h $(INCL_D)\obj_xref.h $(INCL_D)\evp_locl.h \
+	$(INCL_D)\asn1_locl.h $(INCL_D)\vpm_int.h $(INCL_D)\pcy_int.h \
+	$(INCL_D)\cms_lcl.h $(INCL_D)\conf_def.h $(INCL_D)\ui_locl.h \
+	$(INCL_D)\wp_locl.h $(INCL_D)\ssl_locl.h $(INCL_D)\kssl_lcl.h \
+	$(INCL_D)\apps.h $(INCL_D)\progs.h $(INCL_D)\s_apps.h \
+	$(INCL_D)\testdsa.h $(INCL_D)\testrsa.h $(INCL_D)\e_4758cca_err.c \
+	$(INCL_D)\e_4758cca_err.h $(INCL_D)\e_aep_err.c $(INCL_D)\e_aep_err.h \
+	$(INCL_D)\e_atalla_err.c $(INCL_D)\e_atalla_err.h $(INCL_D)\e_cswift_err.c \
+	$(INCL_D)\e_cswift_err.h $(INCL_D)\e_gmp_err.c $(INCL_D)\e_gmp_err.h \
+	$(INCL_D)\e_chil_err.c $(INCL_D)\e_chil_err.h $(INCL_D)\e_nuron_err.c \
+	$(INCL_D)\e_nuron_err.h $(INCL_D)\e_sureware_err.c $(INCL_D)\e_sureware_err.h \
+	$(INCL_D)\e_ubsec_err.c $(INCL_D)\e_ubsec_err.h $(INCL_D)\e_capi_err.c \
+	$(INCL_D)\e_capi_err.h $(INCL_D)\testutil.h 
 
 EXHEADER=$(INCO_D)\e_os2.h \
 	$(INCO_D)\crypto.h $(INCO_D)\opensslv.h $(INCO_D)\opensslconf.h \
 	$(INCO_D)\ebcdic.h $(INCO_D)\symhacks.h $(INCO_D)\ossl_typ.h \
 	$(INCO_D)\md4.h $(INCO_D)\md5.h $(INCO_D)\sha.h \
-	$(INCO_D)\mdc2.h $(INCO_D)\hmac.h $(INCO_D)\cmac.h \
-	$(INCO_D)\ripemd.h $(INCO_D)\des.h $(INCO_D)\des_old.h \
-	$(INCO_D)\rc2.h $(INCO_D)\rc4.h $(INCO_D)\idea.h \
-	$(INCO_D)\blowfish.h $(INCO_D)\cast.h $(INCO_D)\aes.h \
-	$(INCO_D)\camellia.h $(INCO_D)\seed.h $(INCO_D)\modes.h \
-	$(INCO_D)\bn.h $(INCO_D)\rsa.h $(INCO_D)\dsa.h \
-	$(INCO_D)\dso.h $(INCO_D)\dh.h $(INCO_D)\ec.h \
-	$(INCO_D)\ecdh.h $(INCO_D)\ecdsa.h $(INCO_D)\buffer.h \
-	$(INCO_D)\bio.h $(INCO_D)\stack.h $(INCO_D)\safestack.h \
-	$(INCO_D)\lhash.h $(INCO_D)\rand.h $(INCO_D)\err.h \
-	$(INCO_D)\objects.h $(INCO_D)\obj_mac.h $(INCO_D)\evp.h \
-	$(INCO_D)\asn1.h $(INCO_D)\asn1_mac.h $(INCO_D)\asn1t.h \
-	$(INCO_D)\pem.h $(INCO_D)\pem2.h $(INCO_D)\x509.h \
-	$(INCO_D)\x509_vfy.h $(INCO_D)\x509v3.h $(INCO_D)\cms.h \
-	$(INCO_D)\conf.h $(INCO_D)\conf_api.h $(INCO_D)\txt_db.h \
-	$(INCO_D)\pkcs7.h $(INCO_D)\pkcs12.h $(INCO_D)\comp.h \
-	$(INCO_D)\engine.h $(INCO_D)\ocsp.h $(INCO_D)\ui.h \
-	$(INCO_D)\ui_compat.h $(INCO_D)\krb5_asn.h $(INCO_D)\pqueue.h \
-	$(INCO_D)\whrlpool.h $(INCO_D)\ts.h $(INCO_D)\srp.h \
-	$(INCO_D)\ssl.h $(INCO_D)\ssl2.h $(INCO_D)\ssl3.h \
-	$(INCO_D)\ssl23.h $(INCO_D)\tls1.h $(INCO_D)\dtls1.h \
-	$(INCO_D)\kssl.h $(INCO_D)\srtp.h 
+	$(INCO_D)\hmac.h $(INCO_D)\cmac.h $(INCO_D)\ripemd.h \
+	$(INCO_D)\des.h $(INCO_D)\des_old.h $(INCO_D)\rc2.h \
+	$(INCO_D)\rc4.h $(INCO_D)\blowfish.h $(INCO_D)\cast.h \
+	$(INCO_D)\aes.h $(INCO_D)\camellia.h $(INCO_D)\seed.h \
+	$(INCO_D)\modes.h $(INCO_D)\bn.h $(INCO_D)\rsa.h \
+	$(INCO_D)\dsa.h $(INCO_D)\dso.h $(INCO_D)\dh.h \
+	$(INCO_D)\ec.h $(INCO_D)\ecdh.h $(INCO_D)\ecdsa.h \
+	$(INCO_D)\buffer.h $(INCO_D)\bio.h $(INCO_D)\stack.h \
+	$(INCO_D)\safestack.h $(INCO_D)\lhash.h $(INCO_D)\rand.h \
+	$(INCO_D)\err.h $(INCO_D)\objects.h $(INCO_D)\obj_mac.h \
+	$(INCO_D)\evp.h $(INCO_D)\asn1.h $(INCO_D)\asn1_mac.h \
+	$(INCO_D)\asn1t.h $(INCO_D)\pem.h $(INCO_D)\pem2.h \
+	$(INCO_D)\x509.h $(INCO_D)\x509_vfy.h $(INCO_D)\x509v3.h \
+	$(INCO_D)\cms.h $(INCO_D)\conf.h $(INCO_D)\conf_api.h \
+	$(INCO_D)\txt_db.h $(INCO_D)\pkcs7.h $(INCO_D)\pkcs12.h \
+	$(INCO_D)\comp.h $(INCO_D)\engine.h $(INCO_D)\ocsp.h \
+	$(INCO_D)\ui.h $(INCO_D)\ui_compat.h $(INCO_D)\krb5_asn.h \
+	$(INCO_D)\pqueue.h $(INCO_D)\whrlpool.h $(INCO_D)\ts.h \
+	$(INCO_D)\srp.h $(INCO_D)\ssl.h $(INCO_D)\ssl2.h \
+	$(INCO_D)\ssl3.h $(INCO_D)\ssl23.h $(INCO_D)\tls1.h \
+	$(INCO_D)\dtls1.h $(INCO_D)\kssl.h $(INCO_D)\srtp.h 
 
 T_OBJ=$(OBJ_D)\constant_time_test.obj \
 	$(OBJ_D)\md4test.obj $(OBJ_D)\md5test.obj $(OBJ_D)\shatest.obj \
 	$(OBJ_D)\sha1test.obj $(OBJ_D)\sha256t.obj $(OBJ_D)\sha512t.obj \
-	$(OBJ_D)\mdc2test.obj $(OBJ_D)\hmactest.obj $(OBJ_D)\rmdtest.obj \
-	$(OBJ_D)\destest.obj $(OBJ_D)\rc2test.obj $(OBJ_D)\rc4test.obj \
-	$(OBJ_D)\ideatest.obj $(OBJ_D)\bftest.obj $(OBJ_D)\casttest.obj \
-	$(OBJ_D)\bntest.obj $(OBJ_D)\exptest.obj $(OBJ_D)\rsa_test.obj \
-	$(OBJ_D)\dsatest.obj $(OBJ_D)\dhtest.obj $(OBJ_D)\ectest.obj \
-	$(OBJ_D)\ecdhtest.obj $(OBJ_D)\ecdsatest.obj $(OBJ_D)\randtest.obj \
-	$(OBJ_D)\evp_test.obj $(OBJ_D)\evp_extra_test.obj $(OBJ_D)\verify_extra_test.obj \
-	$(OBJ_D)\v3nametest.obj $(OBJ_D)\enginetest.obj $(OBJ_D)\wp_test.obj \
-	$(OBJ_D)\srptest.obj $(OBJ_D)\ssltest.obj $(OBJ_D)\heartbeat_test.obj \
-	$(OBJ_D)\clienthellotest.obj $(OBJ_D)\sslv2conftest.obj $(OBJ_D)\igetest.obj 
+	$(OBJ_D)\hmactest.obj $(OBJ_D)\rmdtest.obj $(OBJ_D)\destest.obj \
+	$(OBJ_D)\rc2test.obj $(OBJ_D)\rc4test.obj $(OBJ_D)\bftest.obj \
+	$(OBJ_D)\casttest.obj $(OBJ_D)\bntest.obj $(OBJ_D)\exptest.obj \
+	$(OBJ_D)\rsa_test.obj $(OBJ_D)\dsatest.obj $(OBJ_D)\dhtest.obj \
+	$(OBJ_D)\ectest.obj $(OBJ_D)\ecdhtest.obj $(OBJ_D)\ecdsatest.obj \
+	$(OBJ_D)\randtest.obj $(OBJ_D)\evp_test.obj $(OBJ_D)\evp_extra_test.obj \
+	$(OBJ_D)\verify_extra_test.obj $(OBJ_D)\v3nametest.obj $(OBJ_D)\enginetest.obj \
+	$(OBJ_D)\wp_test.obj $(OBJ_D)\srptest.obj $(OBJ_D)\ssltest.obj \
+	$(OBJ_D)\heartbeat_test.obj $(OBJ_D)\clienthellotest.obj $(OBJ_D)\sslv2conftest.obj \
+	$(OBJ_D)\igetest.obj 
 
 E_OBJ=$(OBJ_D)\verify.obj \
 	$(OBJ_D)\asn1pars.obj $(OBJ_D)\req.obj $(OBJ_D)\dgst.obj \
@@ -196,58 +195,59 @@ E_OBJ=$(OBJ_D)\verify.obj \
 	$(OBJ_D)\ocsp.obj $(OBJ_D)\prime.obj $(OBJ_D)\ts.obj \
 	$(OBJ_D)\srp.obj $(OBJ_D)\openssl.obj 
 
+GOSTOBJ=$(OBJ_D)\e_gost_err.obj \
+	$(OBJ_D)\gost2001_keyx.obj $(OBJ_D)\gost2001.obj $(OBJ_D)\gost89.obj \
+	$(OBJ_D)\gost94_keyx.obj $(OBJ_D)\gost_ameth.obj $(OBJ_D)\gost_asn1.obj \
+	$(OBJ_D)\gost_crypt.obj $(OBJ_D)\gost_ctl.obj $(OBJ_D)\gost_eng.obj \
+	$(OBJ_D)\gosthash.obj $(OBJ_D)\gost_keywrap.obj $(OBJ_D)\gost_md.obj \
+	$(OBJ_D)\gost_params.obj $(OBJ_D)\gost_pmeth.obj $(OBJ_D)\gost_sign.obj 
+
 CRYPTOOBJ=$(OBJ_D)\cryptlib.obj \
 	$(OBJ_D)\mem.obj $(OBJ_D)\mem_dbg.obj $(OBJ_D)\cversion.obj \
 	$(OBJ_D)\ex_data.obj $(OBJ_D)\cpt_err.obj $(OBJ_D)\ebcdic.obj \
 	$(OBJ_D)\uid.obj $(OBJ_D)\o_time.obj $(OBJ_D)\o_str.obj \
 	$(OBJ_D)\o_dir.obj $(OBJ_D)\o_fips.obj $(OBJ_D)\o_init.obj \
-	$(OBJ_D)\fips_ers.obj $(OBJ_D)\x86_64cpuid.obj $(OBJ_D)\md4_dgst.obj \
+	$(OBJ_D)\fips_ers.obj $(OBJ_D)\x86cpuid.obj $(OBJ_D)\md4_dgst.obj \
 	$(OBJ_D)\md4_one.obj $(OBJ_D)\md5_dgst.obj $(OBJ_D)\md5_one.obj \
-	$(OBJ_D)\md5-x86_64.obj $(OBJ_D)\sha_dgst.obj $(OBJ_D)\sha1dgst.obj \
+	$(OBJ_D)\md5-586.obj $(OBJ_D)\sha_dgst.obj $(OBJ_D)\sha1dgst.obj \
 	$(OBJ_D)\sha_one.obj $(OBJ_D)\sha1_one.obj $(OBJ_D)\sha256.obj \
-	$(OBJ_D)\sha512.obj $(OBJ_D)\sha1-x86_64.obj $(OBJ_D)\sha256-x86_64.obj \
-	$(OBJ_D)\sha512-x86_64.obj $(OBJ_D)\sha1-mb-x86_64.obj $(OBJ_D)\sha256-mb-x86_64.obj \
-	$(OBJ_D)\mdc2dgst.obj $(OBJ_D)\mdc2_one.obj $(OBJ_D)\hmac.obj \
-	$(OBJ_D)\hm_ameth.obj $(OBJ_D)\hm_pmeth.obj $(OBJ_D)\cmac.obj \
-	$(OBJ_D)\cm_ameth.obj $(OBJ_D)\cm_pmeth.obj $(OBJ_D)\rmd_dgst.obj \
-	$(OBJ_D)\rmd_one.obj $(OBJ_D)\set_key.obj $(OBJ_D)\ecb_enc.obj \
+	$(OBJ_D)\sha512.obj $(OBJ_D)\sha1-586.obj $(OBJ_D)\sha256-586.obj \
+	$(OBJ_D)\sha512-586.obj $(OBJ_D)\hmac.obj $(OBJ_D)\hm_ameth.obj \
+	$(OBJ_D)\hm_pmeth.obj $(OBJ_D)\cmac.obj $(OBJ_D)\cm_ameth.obj \
+	$(OBJ_D)\cm_pmeth.obj $(OBJ_D)\rmd_dgst.obj $(OBJ_D)\rmd_one.obj \
+	$(OBJ_D)\rmd-586.obj $(OBJ_D)\set_key.obj $(OBJ_D)\ecb_enc.obj \
 	$(OBJ_D)\cbc_enc.obj $(OBJ_D)\ecb3_enc.obj $(OBJ_D)\cfb64enc.obj \
 	$(OBJ_D)\cfb64ede.obj $(OBJ_D)\cfb_enc.obj $(OBJ_D)\ofb64ede.obj \
 	$(OBJ_D)\enc_read.obj $(OBJ_D)\enc_writ.obj $(OBJ_D)\ofb64enc.obj \
 	$(OBJ_D)\ofb_enc.obj $(OBJ_D)\str2key.obj $(OBJ_D)\pcbc_enc.obj \
-	$(OBJ_D)\qud_cksm.obj $(OBJ_D)\rand_key.obj $(OBJ_D)\des_enc.obj \
-	$(OBJ_D)\fcrypt_b.obj $(OBJ_D)\fcrypt.obj $(OBJ_D)\xcbc_enc.obj \
+	$(OBJ_D)\qud_cksm.obj $(OBJ_D)\rand_key.obj $(OBJ_D)\des-586.obj \
+	$(OBJ_D)\crypt586.obj $(OBJ_D)\fcrypt.obj $(OBJ_D)\xcbc_enc.obj \
 	$(OBJ_D)\rpc_enc.obj $(OBJ_D)\cbc_cksm.obj $(OBJ_D)\ede_cbcm_enc.obj \
 	$(OBJ_D)\des_old.obj $(OBJ_D)\des_old2.obj $(OBJ_D)\read2pwd.obj \
 	$(OBJ_D)\rc2_ecb.obj $(OBJ_D)\rc2_skey.obj $(OBJ_D)\rc2_cbc.obj \
-	$(OBJ_D)\rc2cfb64.obj $(OBJ_D)\rc2ofb64.obj $(OBJ_D)\rc4-x86_64.obj \
-	$(OBJ_D)\rc4-md5-x86_64.obj $(OBJ_D)\rc4_utl.obj $(OBJ_D)\i_cbc.obj \
-	$(OBJ_D)\i_cfb64.obj $(OBJ_D)\i_ofb64.obj $(OBJ_D)\i_ecb.obj \
-	$(OBJ_D)\i_skey.obj $(OBJ_D)\bf_skey.obj $(OBJ_D)\bf_ecb.obj \
-	$(OBJ_D)\bf_enc.obj $(OBJ_D)\bf_cfb64.obj $(OBJ_D)\bf_ofb64.obj \
-	$(OBJ_D)\c_skey.obj $(OBJ_D)\c_ecb.obj $(OBJ_D)\c_enc.obj \
+	$(OBJ_D)\rc2cfb64.obj $(OBJ_D)\rc2ofb64.obj $(OBJ_D)\rc4-586.obj \
+	$(OBJ_D)\rc4_utl.obj $(OBJ_D)\bf_skey.obj $(OBJ_D)\bf_ecb.obj \
+	$(OBJ_D)\bf-586.obj $(OBJ_D)\bf_cfb64.obj $(OBJ_D)\bf_ofb64.obj \
+	$(OBJ_D)\c_skey.obj $(OBJ_D)\c_ecb.obj $(OBJ_D)\cast-586.obj \
 	$(OBJ_D)\c_cfb64.obj $(OBJ_D)\c_ofb64.obj $(OBJ_D)\aes_misc.obj \
 	$(OBJ_D)\aes_ecb.obj $(OBJ_D)\aes_cfb.obj $(OBJ_D)\aes_ofb.obj \
 	$(OBJ_D)\aes_ctr.obj $(OBJ_D)\aes_ige.obj $(OBJ_D)\aes_wrap.obj \
-	$(OBJ_D)\aes-x86_64.obj $(OBJ_D)\vpaes-x86_64.obj $(OBJ_D)\bsaes-x86_64.obj \
-	$(OBJ_D)\aesni-x86_64.obj $(OBJ_D)\aesni-sha1-x86_64.obj $(OBJ_D)\aesni-sha256-x86_64.obj \
-	$(OBJ_D)\aesni-mb-x86_64.obj $(OBJ_D)\cmll_ecb.obj $(OBJ_D)\cmll_ofb.obj \
-	$(OBJ_D)\cmll_cfb.obj $(OBJ_D)\cmll_ctr.obj $(OBJ_D)\cmll_utl.obj \
-	$(OBJ_D)\cmll-x86_64.obj $(OBJ_D)\cmll_misc.obj $(OBJ_D)\seed.obj \
-	$(OBJ_D)\seed_ecb.obj $(OBJ_D)\seed_cbc.obj $(OBJ_D)\seed_cfb.obj \
-	$(OBJ_D)\seed_ofb.obj $(OBJ_D)\cbc128.obj $(OBJ_D)\ctr128.obj \
-	$(OBJ_D)\cts128.obj $(OBJ_D)\cfb128.obj $(OBJ_D)\ofb128.obj \
-	$(OBJ_D)\gcm128.obj $(OBJ_D)\ccm128.obj $(OBJ_D)\xts128.obj \
-	$(OBJ_D)\wrap128.obj $(OBJ_D)\ghash-x86_64.obj $(OBJ_D)\aesni-gcm-x86_64.obj \
+	$(OBJ_D)\aes-586.obj $(OBJ_D)\vpaes-x86.obj $(OBJ_D)\aesni-x86.obj \
+	$(OBJ_D)\cmll_ecb.obj $(OBJ_D)\cmll_ofb.obj $(OBJ_D)\cmll_cfb.obj \
+	$(OBJ_D)\cmll_ctr.obj $(OBJ_D)\cmll_utl.obj $(OBJ_D)\cmll-x86.obj \
+	$(OBJ_D)\seed.obj $(OBJ_D)\seed_ecb.obj $(OBJ_D)\seed_cbc.obj \
+	$(OBJ_D)\seed_cfb.obj $(OBJ_D)\seed_ofb.obj $(OBJ_D)\cbc128.obj \
+	$(OBJ_D)\ctr128.obj $(OBJ_D)\cts128.obj $(OBJ_D)\cfb128.obj \
+	$(OBJ_D)\ofb128.obj $(OBJ_D)\gcm128.obj $(OBJ_D)\ccm128.obj \
+	$(OBJ_D)\xts128.obj $(OBJ_D)\wrap128.obj $(OBJ_D)\ghash-x86.obj \
 	$(OBJ_D)\bn_add.obj $(OBJ_D)\bn_div.obj $(OBJ_D)\bn_exp.obj \
 	$(OBJ_D)\bn_lib.obj $(OBJ_D)\bn_ctx.obj $(OBJ_D)\bn_mul.obj \
 	$(OBJ_D)\bn_mod.obj $(OBJ_D)\bn_print.obj $(OBJ_D)\bn_rand.obj \
 	$(OBJ_D)\bn_shift.obj $(OBJ_D)\bn_word.obj $(OBJ_D)\bn_blind.obj \
 	$(OBJ_D)\bn_kron.obj $(OBJ_D)\bn_sqrt.obj $(OBJ_D)\bn_gcd.obj \
 	$(OBJ_D)\bn_prime.obj $(OBJ_D)\bn_err.obj $(OBJ_D)\bn_sqr.obj \
-	$(OBJ_D)\bn_asm.obj $(OBJ_D)\x86_64-mont.obj $(OBJ_D)\x86_64-mont5.obj \
-	$(OBJ_D)\x86_64-gf2m.obj $(OBJ_D)\rsaz_exp.obj $(OBJ_D)\rsaz-x86_64.obj \
-	$(OBJ_D)\rsaz-avx2.obj $(OBJ_D)\bn_recp.obj $(OBJ_D)\bn_mont.obj \
+	$(OBJ_D)\bn-586.obj $(OBJ_D)\co-586.obj $(OBJ_D)\x86-mont.obj \
+	$(OBJ_D)\x86-gf2m.obj $(OBJ_D)\bn_recp.obj $(OBJ_D)\bn_mont.obj \
 	$(OBJ_D)\bn_mpi.obj $(OBJ_D)\bn_exp2.obj $(OBJ_D)\bn_gf2m.obj \
 	$(OBJ_D)\bn_nist.obj $(OBJ_D)\bn_depr.obj $(OBJ_D)\bn_const.obj \
 	$(OBJ_D)\bn_x931p.obj $(OBJ_D)\rsa_eay.obj $(OBJ_D)\rsa_gen.obj \
@@ -276,34 +276,33 @@ CRYPTOOBJ=$(OBJ_D)\cryptlib.obj \
 	$(OBJ_D)\ec_pmeth.obj $(OBJ_D)\eck_prn.obj $(OBJ_D)\ecp_nistp224.obj \
 	$(OBJ_D)\ecp_nistp256.obj $(OBJ_D)\ecp_nistp521.obj $(OBJ_D)\ecp_nistputil.obj \
 	$(OBJ_D)\ecp_oct.obj $(OBJ_D)\ec2_oct.obj $(OBJ_D)\ec_oct.obj \
-	$(OBJ_D)\ecp_nistz256.obj $(OBJ_D)\ecp_nistz256-x86_64.obj $(OBJ_D)\ech_lib.obj \
-	$(OBJ_D)\ech_ossl.obj $(OBJ_D)\ech_key.obj $(OBJ_D)\ech_err.obj \
-	$(OBJ_D)\ech_kdf.obj $(OBJ_D)\ecs_lib.obj $(OBJ_D)\ecs_asn1.obj \
-	$(OBJ_D)\ecs_ossl.obj $(OBJ_D)\ecs_sign.obj $(OBJ_D)\ecs_vrf.obj \
-	$(OBJ_D)\ecs_err.obj $(OBJ_D)\buffer.obj $(OBJ_D)\buf_str.obj \
-	$(OBJ_D)\buf_err.obj $(OBJ_D)\bio_lib.obj $(OBJ_D)\bio_cb.obj \
-	$(OBJ_D)\bio_err.obj $(OBJ_D)\bss_mem.obj $(OBJ_D)\bss_null.obj \
-	$(OBJ_D)\bss_fd.obj $(OBJ_D)\bss_file.obj $(OBJ_D)\bss_sock.obj \
-	$(OBJ_D)\bss_conn.obj $(OBJ_D)\bf_null.obj $(OBJ_D)\bf_buff.obj \
-	$(OBJ_D)\b_print.obj $(OBJ_D)\b_dump.obj $(OBJ_D)\b_sock.obj \
-	$(OBJ_D)\bss_acpt.obj $(OBJ_D)\bf_nbio.obj $(OBJ_D)\bss_log.obj \
-	$(OBJ_D)\bss_bio.obj $(OBJ_D)\bss_dgram.obj $(OBJ_D)\stack.obj \
-	$(OBJ_D)\lhash.obj $(OBJ_D)\lh_stats.obj $(OBJ_D)\md_rand.obj \
-	$(OBJ_D)\randfile.obj $(OBJ_D)\rand_lib.obj $(OBJ_D)\rand_err.obj \
-	$(OBJ_D)\rand_egd.obj $(OBJ_D)\rand_win.obj $(OBJ_D)\rand_unix.obj \
-	$(OBJ_D)\rand_os2.obj $(OBJ_D)\rand_nw.obj $(OBJ_D)\err.obj \
-	$(OBJ_D)\err_all.obj $(OBJ_D)\err_prn.obj $(OBJ_D)\o_names.obj \
-	$(OBJ_D)\obj_dat.obj $(OBJ_D)\obj_lib.obj $(OBJ_D)\obj_err.obj \
-	$(OBJ_D)\obj_xref.obj $(OBJ_D)\encode.obj $(OBJ_D)\digest.obj \
-	$(OBJ_D)\evp_enc.obj $(OBJ_D)\evp_key.obj $(OBJ_D)\evp_acnf.obj \
-	$(OBJ_D)\evp_cnf.obj $(OBJ_D)\e_des.obj $(OBJ_D)\e_bf.obj \
-	$(OBJ_D)\e_idea.obj $(OBJ_D)\e_des3.obj $(OBJ_D)\e_camellia.obj \
-	$(OBJ_D)\e_rc4.obj $(OBJ_D)\e_aes.obj $(OBJ_D)\names.obj \
-	$(OBJ_D)\e_seed.obj $(OBJ_D)\e_xcbc_d.obj $(OBJ_D)\e_rc2.obj \
-	$(OBJ_D)\e_cast.obj $(OBJ_D)\e_rc5.obj $(OBJ_D)\m_null.obj \
-	$(OBJ_D)\m_md4.obj $(OBJ_D)\m_md5.obj $(OBJ_D)\m_sha.obj \
-	$(OBJ_D)\m_sha1.obj $(OBJ_D)\m_wp.obj $(OBJ_D)\m_dss.obj \
-	$(OBJ_D)\m_dss1.obj $(OBJ_D)\m_mdc2.obj $(OBJ_D)\m_ripemd.obj \
+	$(OBJ_D)\ech_lib.obj $(OBJ_D)\ech_ossl.obj $(OBJ_D)\ech_key.obj \
+	$(OBJ_D)\ech_err.obj $(OBJ_D)\ech_kdf.obj $(OBJ_D)\ecs_lib.obj \
+	$(OBJ_D)\ecs_asn1.obj $(OBJ_D)\ecs_ossl.obj $(OBJ_D)\ecs_sign.obj \
+	$(OBJ_D)\ecs_vrf.obj $(OBJ_D)\ecs_err.obj $(OBJ_D)\buffer.obj \
+	$(OBJ_D)\buf_str.obj $(OBJ_D)\buf_err.obj $(OBJ_D)\bio_lib.obj \
+	$(OBJ_D)\bio_cb.obj $(OBJ_D)\bio_err.obj $(OBJ_D)\bss_mem.obj \
+	$(OBJ_D)\bss_null.obj $(OBJ_D)\bss_fd.obj $(OBJ_D)\bss_file.obj \
+	$(OBJ_D)\bss_sock.obj $(OBJ_D)\bss_conn.obj $(OBJ_D)\bf_null.obj \
+	$(OBJ_D)\bf_buff.obj $(OBJ_D)\b_print.obj $(OBJ_D)\b_dump.obj \
+	$(OBJ_D)\b_sock.obj $(OBJ_D)\bss_acpt.obj $(OBJ_D)\bf_nbio.obj \
+	$(OBJ_D)\bss_log.obj $(OBJ_D)\bss_bio.obj $(OBJ_D)\bss_dgram.obj \
+	$(OBJ_D)\stack.obj $(OBJ_D)\lhash.obj $(OBJ_D)\lh_stats.obj \
+	$(OBJ_D)\md_rand.obj $(OBJ_D)\randfile.obj $(OBJ_D)\rand_lib.obj \
+	$(OBJ_D)\rand_err.obj $(OBJ_D)\rand_egd.obj $(OBJ_D)\rand_win.obj \
+	$(OBJ_D)\rand_unix.obj $(OBJ_D)\rand_os2.obj $(OBJ_D)\rand_nw.obj \
+	$(OBJ_D)\err.obj $(OBJ_D)\err_all.obj $(OBJ_D)\err_prn.obj \
+	$(OBJ_D)\o_names.obj $(OBJ_D)\obj_dat.obj $(OBJ_D)\obj_lib.obj \
+	$(OBJ_D)\obj_err.obj $(OBJ_D)\obj_xref.obj $(OBJ_D)\encode.obj \
+	$(OBJ_D)\digest.obj $(OBJ_D)\evp_enc.obj $(OBJ_D)\evp_key.obj \
+	$(OBJ_D)\evp_acnf.obj $(OBJ_D)\evp_cnf.obj $(OBJ_D)\e_des.obj \
+	$(OBJ_D)\e_bf.obj $(OBJ_D)\e_idea.obj $(OBJ_D)\e_des3.obj \
+	$(OBJ_D)\e_camellia.obj $(OBJ_D)\e_rc4.obj $(OBJ_D)\e_aes.obj \
+	$(OBJ_D)\names.obj $(OBJ_D)\e_seed.obj $(OBJ_D)\e_xcbc_d.obj \
+	$(OBJ_D)\e_rc2.obj $(OBJ_D)\e_cast.obj $(OBJ_D)\e_rc5.obj \
+	$(OBJ_D)\m_null.obj $(OBJ_D)\m_md4.obj $(OBJ_D)\m_md5.obj \
+	$(OBJ_D)\m_sha.obj $(OBJ_D)\m_sha1.obj $(OBJ_D)\m_wp.obj \
+	$(OBJ_D)\m_dss.obj $(OBJ_D)\m_dss1.obj $(OBJ_D)\m_ripemd.obj \
 	$(OBJ_D)\m_ecdsa.obj $(OBJ_D)\p_open.obj $(OBJ_D)\p_seal.obj \
 	$(OBJ_D)\p_sign.obj $(OBJ_D)\p_verify.obj $(OBJ_D)\p_lib.obj \
 	$(OBJ_D)\p_enc.obj $(OBJ_D)\p_dec.obj $(OBJ_D)\bio_md.obj \
@@ -394,20 +393,12 @@ CRYPTOOBJ=$(OBJ_D)\cryptlib.obj \
 	$(OBJ_D)\ocsp_vfy.obj $(OBJ_D)\ocsp_err.obj $(OBJ_D)\ui_err.obj \
 	$(OBJ_D)\ui_lib.obj $(OBJ_D)\ui_openssl.obj $(OBJ_D)\ui_util.obj \
 	$(OBJ_D)\ui_compat.obj $(OBJ_D)\krb5_asn.obj $(OBJ_D)\pqueue.obj \
-	$(OBJ_D)\wp_dgst.obj $(OBJ_D)\wp-x86_64.obj $(OBJ_D)\ts_err.obj \
-	$(OBJ_D)\ts_req_utils.obj $(OBJ_D)\ts_req_print.obj $(OBJ_D)\ts_rsp_utils.obj \
-	$(OBJ_D)\ts_rsp_print.obj $(OBJ_D)\ts_rsp_sign.obj $(OBJ_D)\ts_rsp_verify.obj \
-	$(OBJ_D)\ts_verify_ctx.obj $(OBJ_D)\ts_lib.obj $(OBJ_D)\ts_conf.obj \
-	$(OBJ_D)\ts_asn1.obj $(OBJ_D)\srp_lib.obj $(OBJ_D)\srp_vfy.obj \
-	$(OBJ_D)\e_4758cca.obj $(OBJ_D)\e_aep.obj $(OBJ_D)\e_atalla.obj \
-	$(OBJ_D)\e_cswift.obj $(OBJ_D)\e_gmp.obj $(OBJ_D)\e_chil.obj \
-	$(OBJ_D)\e_nuron.obj $(OBJ_D)\e_sureware.obj $(OBJ_D)\e_ubsec.obj \
-	$(OBJ_D)\e_padlock.obj $(OBJ_D)\e_capi.obj $(OBJ_D)\e_gost_err.obj \
-	$(OBJ_D)\gost2001_keyx.obj $(OBJ_D)\gost2001.obj $(OBJ_D)\gost89.obj \
-	$(OBJ_D)\gost94_keyx.obj $(OBJ_D)\gost_ameth.obj $(OBJ_D)\gost_asn1.obj \
-	$(OBJ_D)\gost_crypt.obj $(OBJ_D)\gost_ctl.obj $(OBJ_D)\gost_eng.obj \
-	$(OBJ_D)\gosthash.obj $(OBJ_D)\gost_keywrap.obj $(OBJ_D)\gost_md.obj \
-	$(OBJ_D)\gost_params.obj $(OBJ_D)\gost_pmeth.obj $(OBJ_D)\gost_sign.obj $(OBJ_D)\$(CRYPTO).res 
+	$(OBJ_D)\wp_dgst.obj $(OBJ_D)\wp_block.obj $(OBJ_D)\wp-mmx.obj \
+	$(OBJ_D)\ts_err.obj $(OBJ_D)\ts_req_utils.obj $(OBJ_D)\ts_req_print.obj \
+	$(OBJ_D)\ts_rsp_utils.obj $(OBJ_D)\ts_rsp_print.obj $(OBJ_D)\ts_rsp_sign.obj \
+	$(OBJ_D)\ts_rsp_verify.obj $(OBJ_D)\ts_verify_ctx.obj $(OBJ_D)\ts_lib.obj \
+	$(OBJ_D)\ts_conf.obj $(OBJ_D)\ts_asn1.obj $(OBJ_D)\srp_lib.obj \
+	$(OBJ_D)\srp_vfy.obj $(OBJ_D)\$(CRYPTO).res 
 
 SSLOBJ=$(OBJ_D)\s2_meth.obj \
 	$(OBJ_D)\s2_srvr.obj $(OBJ_D)\s2_clnt.obj $(OBJ_D)\s2_lib.obj \
@@ -431,18 +422,22 @@ SSLOBJ=$(OBJ_D)\s2_meth.obj \
 T_EXE=$(TEST_D)\constant_time_test.exe \
 	$(TEST_D)\md4test.exe $(TEST_D)\md5test.exe $(TEST_D)\shatest.exe \
 	$(TEST_D)\sha1test.exe $(TEST_D)\sha256t.exe $(TEST_D)\sha512t.exe \
-	$(TEST_D)\mdc2test.exe $(TEST_D)\hmactest.exe $(TEST_D)\rmdtest.exe \
-	$(TEST_D)\destest.exe $(TEST_D)\rc2test.exe $(TEST_D)\rc4test.exe \
-	$(TEST_D)\ideatest.exe $(TEST_D)\bftest.exe $(TEST_D)\casttest.exe \
-	$(TEST_D)\bntest.exe $(TEST_D)\exptest.exe $(TEST_D)\rsa_test.exe \
-	$(TEST_D)\dsatest.exe $(TEST_D)\dhtest.exe $(TEST_D)\ectest.exe \
-	$(TEST_D)\ecdhtest.exe $(TEST_D)\ecdsatest.exe $(TEST_D)\randtest.exe \
-	$(TEST_D)\evp_test.exe $(TEST_D)\evp_extra_test.exe $(TEST_D)\verify_extra_test.exe \
-	$(TEST_D)\v3nametest.exe $(TEST_D)\enginetest.exe $(TEST_D)\wp_test.exe \
-	$(TEST_D)\srptest.exe $(TEST_D)\ssltest.exe $(TEST_D)\heartbeat_test.exe \
-	$(TEST_D)\clienthellotest.exe $(TEST_D)\sslv2conftest.exe $(TEST_D)\igetest.exe 
+	$(TEST_D)\hmactest.exe $(TEST_D)\rmdtest.exe $(TEST_D)\destest.exe \
+	$(TEST_D)\rc2test.exe $(TEST_D)\rc4test.exe $(TEST_D)\bftest.exe \
+	$(TEST_D)\casttest.exe $(TEST_D)\bntest.exe $(TEST_D)\exptest.exe \
+	$(TEST_D)\rsa_test.exe $(TEST_D)\dsatest.exe $(TEST_D)\dhtest.exe \
+	$(TEST_D)\ectest.exe $(TEST_D)\ecdhtest.exe $(TEST_D)\ecdsatest.exe \
+	$(TEST_D)\randtest.exe $(TEST_D)\evp_test.exe $(TEST_D)\evp_extra_test.exe \
+	$(TEST_D)\verify_extra_test.exe $(TEST_D)\v3nametest.exe $(TEST_D)\enginetest.exe \
+	$(TEST_D)\wp_test.exe $(TEST_D)\srptest.exe $(TEST_D)\ssltest.exe \
+	$(TEST_D)\heartbeat_test.exe $(TEST_D)\clienthellotest.exe $(TEST_D)\sslv2conftest.exe \
+	$(TEST_D)\igetest.exe 
 
-E_SHLIB=
+E_SHLIB=$(ENG_D)\4758cca.dll \
+	$(ENG_D)\aep.dll $(ENG_D)\atalla.dll $(ENG_D)\cswift.dll \
+	$(ENG_D)\gmp.dll $(ENG_D)\chil.dll $(ENG_D)\nuron.dll \
+	$(ENG_D)\sureware.dll $(ENG_D)\ubsec.dll $(ENG_D)\padlock.dll \
+	$(ENG_D)\capi.dll $(ENG_D)\gost.dll 
 
 ###################################################################
 all: banner $(TMP_D) $(BIN_D) $(TEST_D) $(LIB_D) $(INCO_D) headers lib exe 
@@ -461,7 +456,6 @@ EXHEADER= $(EXHEADER) $(INCO_D)\applink.c
 
 LIBS_DEP=$(LIBS_DEP) $(OBJ_D)\applink.obj
 CRYPTOOBJ=$(OBJ_D)\uplink.obj $(CRYPTOOBJ)
-CRYPTOOBJ=ms\uptable.obj $(CRYPTOOBJ)
 
 
 $(TMP_D):
@@ -507,6 +501,8 @@ install: all
 	$(CP) "$(O_CRYPTO)" "$(INSTALLTOP)\bin"
 	$(CP) "$(L_SSL)" "$(INSTALLTOP)\lib"
 	$(CP) "$(L_CRYPTO)" "$(INSTALLTOP)\lib"
+	$(MKDIR) "$(INSTALLTOP)\lib\engines"
+	$(CP) "$(E_SHLIB)" "$(INSTALLTOP)\lib\engines"
 
 
 clean:
@@ -583,9 +579,6 @@ $(INCL_D)\rc2_locl.h: $(SRC_D)\crypto\rc2\rc2_locl.h
 
 $(INCL_D)\rc4_locl.h: $(SRC_D)\crypto\rc4\rc4_locl.h
 	$(PERL) $(SRC_D)\util\copy-if-different.pl "$(SRC_D)\crypto\rc4\rc4_locl.h" "$(INCL_D)\rc4_locl.h"
-
-$(INCL_D)\idea_lcl.h: $(SRC_D)\crypto\idea\idea_lcl.h
-	$(PERL) $(SRC_D)\util\copy-if-different.pl "$(SRC_D)\crypto\idea\idea_lcl.h" "$(INCL_D)\idea_lcl.h"
 
 $(INCL_D)\bf_pi.h: $(SRC_D)\crypto\bf\bf_pi.h
 	$(PERL) $(SRC_D)\util\copy-if-different.pl "$(SRC_D)\crypto\bf\bf_pi.h" "$(INCL_D)\bf_pi.h"
@@ -776,9 +769,6 @@ $(INCO_D)\md5.h: $(SRC_D)\crypto\md5\md5.h
 $(INCO_D)\sha.h: $(SRC_D)\crypto\sha\sha.h
 	$(PERL) $(SRC_D)\util\copy-if-different.pl "$(SRC_D)\crypto\sha\sha.h" "$(INCO_D)\sha.h"
 
-$(INCO_D)\mdc2.h: $(SRC_D)\crypto\mdc2\mdc2.h
-	$(PERL) $(SRC_D)\util\copy-if-different.pl "$(SRC_D)\crypto\mdc2\mdc2.h" "$(INCO_D)\mdc2.h"
-
 $(INCO_D)\hmac.h: $(SRC_D)\crypto\hmac\hmac.h
 	$(PERL) $(SRC_D)\util\copy-if-different.pl "$(SRC_D)\crypto\hmac\hmac.h" "$(INCO_D)\hmac.h"
 
@@ -799,9 +789,6 @@ $(INCO_D)\rc2.h: $(SRC_D)\crypto\rc2\rc2.h
 
 $(INCO_D)\rc4.h: $(SRC_D)\crypto\rc4\rc4.h
 	$(PERL) $(SRC_D)\util\copy-if-different.pl "$(SRC_D)\crypto\rc4\rc4.h" "$(INCO_D)\rc4.h"
-
-$(INCO_D)\idea.h: $(SRC_D)\crypto\idea\idea.h
-	$(PERL) $(SRC_D)\util\copy-if-different.pl "$(SRC_D)\crypto\idea\idea.h" "$(INCO_D)\idea.h"
 
 $(INCO_D)\blowfish.h: $(SRC_D)\crypto\bf\blowfish.h
 	$(PERL) $(SRC_D)\util\copy-if-different.pl "$(SRC_D)\crypto\bf\blowfish.h" "$(INCO_D)\blowfish.h"
@@ -992,9 +979,6 @@ $(OBJ_D)\sha256t.obj: $(SRC_D)\crypto\sha\sha256t.c
 $(OBJ_D)\sha512t.obj: $(SRC_D)\crypto\sha\sha512t.c
 	$(CC) /Fo$(OBJ_D)\sha512t.obj $(APP_CFLAGS) -c $(SRC_D)\crypto\sha\sha512t.c
 
-$(OBJ_D)\mdc2test.obj: $(SRC_D)\crypto\mdc2\mdc2test.c
-	$(CC) /Fo$(OBJ_D)\mdc2test.obj $(APP_CFLAGS) -c $(SRC_D)\crypto\mdc2\mdc2test.c
-
 $(OBJ_D)\hmactest.obj: $(SRC_D)\crypto\hmac\hmactest.c
 	$(CC) /Fo$(OBJ_D)\hmactest.obj $(APP_CFLAGS) -c $(SRC_D)\crypto\hmac\hmactest.c
 
@@ -1009,9 +993,6 @@ $(OBJ_D)\rc2test.obj: $(SRC_D)\crypto\rc2\rc2test.c
 
 $(OBJ_D)\rc4test.obj: $(SRC_D)\crypto\rc4\rc4test.c
 	$(CC) /Fo$(OBJ_D)\rc4test.obj $(APP_CFLAGS) -c $(SRC_D)\crypto\rc4\rc4test.c
-
-$(OBJ_D)\ideatest.obj: $(SRC_D)\crypto\idea\ideatest.c
-	$(CC) /Fo$(OBJ_D)\ideatest.obj $(APP_CFLAGS) -c $(SRC_D)\crypto\idea\ideatest.c
 
 $(OBJ_D)\bftest.obj: $(SRC_D)\crypto\bf\bftest.c
 	$(CC) /Fo$(OBJ_D)\bftest.obj $(APP_CFLAGS) -c $(SRC_D)\crypto\bf\bftest.c
@@ -1235,6 +1216,54 @@ $(OBJ_D)\srp.obj: $(SRC_D)\apps\srp.c
 $(OBJ_D)\openssl.obj: $(SRC_D)\apps\openssl.c
 	$(CC) /Fo$(OBJ_D)\openssl.obj -DMONOLITH $(APP_CFLAGS) -c $(SRC_D)\apps\openssl.c
 
+$(OBJ_D)\e_gost_err.obj: $(SRC_D)\engines\ccgost\e_gost_err.c
+	$(CC) /Fo$(OBJ_D)\e_gost_err.obj  $(SHLIB_CFLAGS) -c $(SRC_D)\engines\ccgost\e_gost_err.c
+
+$(OBJ_D)\gost2001_keyx.obj: $(SRC_D)\engines\ccgost\gost2001_keyx.c
+	$(CC) /Fo$(OBJ_D)\gost2001_keyx.obj  $(SHLIB_CFLAGS) -c $(SRC_D)\engines\ccgost\gost2001_keyx.c
+
+$(OBJ_D)\gost2001.obj: $(SRC_D)\engines\ccgost\gost2001.c
+	$(CC) /Fo$(OBJ_D)\gost2001.obj  $(SHLIB_CFLAGS) -c $(SRC_D)\engines\ccgost\gost2001.c
+
+$(OBJ_D)\gost89.obj: $(SRC_D)\engines\ccgost\gost89.c
+	$(CC) /Fo$(OBJ_D)\gost89.obj  $(SHLIB_CFLAGS) -c $(SRC_D)\engines\ccgost\gost89.c
+
+$(OBJ_D)\gost94_keyx.obj: $(SRC_D)\engines\ccgost\gost94_keyx.c
+	$(CC) /Fo$(OBJ_D)\gost94_keyx.obj  $(SHLIB_CFLAGS) -c $(SRC_D)\engines\ccgost\gost94_keyx.c
+
+$(OBJ_D)\gost_ameth.obj: $(SRC_D)\engines\ccgost\gost_ameth.c
+	$(CC) /Fo$(OBJ_D)\gost_ameth.obj  $(SHLIB_CFLAGS) -c $(SRC_D)\engines\ccgost\gost_ameth.c
+
+$(OBJ_D)\gost_asn1.obj: $(SRC_D)\engines\ccgost\gost_asn1.c
+	$(CC) /Fo$(OBJ_D)\gost_asn1.obj  $(SHLIB_CFLAGS) -c $(SRC_D)\engines\ccgost\gost_asn1.c
+
+$(OBJ_D)\gost_crypt.obj: $(SRC_D)\engines\ccgost\gost_crypt.c
+	$(CC) /Fo$(OBJ_D)\gost_crypt.obj  $(SHLIB_CFLAGS) -c $(SRC_D)\engines\ccgost\gost_crypt.c
+
+$(OBJ_D)\gost_ctl.obj: $(SRC_D)\engines\ccgost\gost_ctl.c
+	$(CC) /Fo$(OBJ_D)\gost_ctl.obj  $(SHLIB_CFLAGS) -c $(SRC_D)\engines\ccgost\gost_ctl.c
+
+$(OBJ_D)\gost_eng.obj: $(SRC_D)\engines\ccgost\gost_eng.c
+	$(CC) /Fo$(OBJ_D)\gost_eng.obj  $(SHLIB_CFLAGS) -c $(SRC_D)\engines\ccgost\gost_eng.c
+
+$(OBJ_D)\gosthash.obj: $(SRC_D)\engines\ccgost\gosthash.c
+	$(CC) /Fo$(OBJ_D)\gosthash.obj  $(SHLIB_CFLAGS) -c $(SRC_D)\engines\ccgost\gosthash.c
+
+$(OBJ_D)\gost_keywrap.obj: $(SRC_D)\engines\ccgost\gost_keywrap.c
+	$(CC) /Fo$(OBJ_D)\gost_keywrap.obj  $(SHLIB_CFLAGS) -c $(SRC_D)\engines\ccgost\gost_keywrap.c
+
+$(OBJ_D)\gost_md.obj: $(SRC_D)\engines\ccgost\gost_md.c
+	$(CC) /Fo$(OBJ_D)\gost_md.obj  $(SHLIB_CFLAGS) -c $(SRC_D)\engines\ccgost\gost_md.c
+
+$(OBJ_D)\gost_params.obj: $(SRC_D)\engines\ccgost\gost_params.c
+	$(CC) /Fo$(OBJ_D)\gost_params.obj  $(SHLIB_CFLAGS) -c $(SRC_D)\engines\ccgost\gost_params.c
+
+$(OBJ_D)\gost_pmeth.obj: $(SRC_D)\engines\ccgost\gost_pmeth.c
+	$(CC) /Fo$(OBJ_D)\gost_pmeth.obj  $(SHLIB_CFLAGS) -c $(SRC_D)\engines\ccgost\gost_pmeth.c
+
+$(OBJ_D)\gost_sign.obj: $(SRC_D)\engines\ccgost\gost_sign.c
+	$(CC) /Fo$(OBJ_D)\gost_sign.obj  $(SHLIB_CFLAGS) -c $(SRC_D)\engines\ccgost\gost_sign.c
+
 $(OBJ_D)\cryptlib.obj: $(SRC_D)\crypto\cryptlib.c
 	$(CC) /Fo$(OBJ_D)\cryptlib.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\cryptlib.c
 
@@ -1245,7 +1274,7 @@ $(OBJ_D)\mem_dbg.obj: $(SRC_D)\crypto\mem_dbg.c
 	$(CC) /Fo$(OBJ_D)\mem_dbg.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\mem_dbg.c
 
 $(OBJ_D)\cversion.obj: $(SRC_D)\crypto\cversion.c
-	$(CC) /Fo$(OBJ_D)\cversion.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -DMK1MF_BUILD -DMK1MF_PLATFORM_VC_WIN64A -c $(SRC_D)\crypto\cversion.c
+	$(CC) /Fo$(OBJ_D)\cversion.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -DMK1MF_BUILD -DMK1MF_PLATFORM_VC_WIN32 -c $(SRC_D)\crypto\cversion.c
 
 $(OBJ_D)\ex_data.obj: $(SRC_D)\crypto\ex_data.c
 	$(CC) /Fo$(OBJ_D)\ex_data.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\ex_data.c
@@ -1277,12 +1306,11 @@ $(OBJ_D)\o_init.obj: $(SRC_D)\crypto\o_init.c
 $(OBJ_D)\fips_ers.obj: $(SRC_D)\crypto\fips_ers.c
 	$(CC) /Fo$(OBJ_D)\fips_ers.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\fips_ers.c
 
-$(TMP_D)\x86_64cpuid.asm: crypto\x86_64cpuid.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\x86_64cpuid.pl $@
+$(TMP_D)\x86cpuid.asm: crypto\x86cpuid.pl
+	$(PERL) crypto\x86cpuid.pl win32n $(CFLAG) >$@
 
-$(OBJ_D)\x86_64cpuid.obj: $(TMP_D)\x86_64cpuid.asm
-	$(ASM) /Fo$@ $(TMP_D)\x86_64cpuid.asm
+$(OBJ_D)\x86cpuid.obj: $(TMP_D)\x86cpuid.asm
+	$(ASM) -o $@ $(TMP_D)\x86cpuid.asm
 
 $(OBJ_D)\md4_dgst.obj: $(SRC_D)\crypto\md4\md4_dgst.c
 	$(CC) /Fo$(OBJ_D)\md4_dgst.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\md4\md4_dgst.c
@@ -1296,12 +1324,11 @@ $(OBJ_D)\md5_dgst.obj: $(SRC_D)\crypto\md5\md5_dgst.c
 $(OBJ_D)\md5_one.obj: $(SRC_D)\crypto\md5\md5_one.c
 	$(CC) /Fo$(OBJ_D)\md5_one.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\md5\md5_one.c
 
-$(TMP_D)\md5-x86_64.asm: crypto\md5\asm\md5-x86_64.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\md5\asm\md5-x86_64.pl $@
+$(TMP_D)\md5-586.asm: crypto\md5\asm\md5-586.pl
+	$(PERL) crypto\md5\asm\md5-586.pl win32n $(CFLAG) >$@
 
-$(OBJ_D)\md5-x86_64.obj: $(TMP_D)\md5-x86_64.asm
-	$(ASM) /Fo$@ $(TMP_D)\md5-x86_64.asm
+$(OBJ_D)\md5-586.obj: $(TMP_D)\md5-586.asm
+	$(ASM) -o $@ $(TMP_D)\md5-586.asm
 
 $(OBJ_D)\sha_dgst.obj: $(SRC_D)\crypto\sha\sha_dgst.c
 	$(CC) /Fo$(OBJ_D)\sha_dgst.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\sha\sha_dgst.c
@@ -1321,46 +1348,23 @@ $(OBJ_D)\sha256.obj: $(SRC_D)\crypto\sha\sha256.c
 $(OBJ_D)\sha512.obj: $(SRC_D)\crypto\sha\sha512.c
 	$(CC) /Fo$(OBJ_D)\sha512.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\sha\sha512.c
 
-$(TMP_D)\sha1-x86_64.asm: crypto\sha\asm\sha1-x86_64.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\sha\asm\sha1-x86_64.pl $@
+$(TMP_D)\sha1-586.asm: crypto\sha\asm\sha1-586.pl
+	$(PERL) crypto\sha\asm\sha1-586.pl win32n $(CFLAG) >$@
 
-$(OBJ_D)\sha1-x86_64.obj: $(TMP_D)\sha1-x86_64.asm
-	$(ASM) /Fo$@ $(TMP_D)\sha1-x86_64.asm
+$(OBJ_D)\sha1-586.obj: $(TMP_D)\sha1-586.asm
+	$(ASM) -o $@ $(TMP_D)\sha1-586.asm
 
-$(TMP_D)\sha256-x86_64.asm: crypto\sha\asm\sha512-x86_64.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\sha\asm\sha512-x86_64.pl $@
+$(TMP_D)\sha256-586.asm: crypto\sha\asm\sha256-586.pl
+	$(PERL) crypto\sha\asm\sha256-586.pl win32n $(CFLAG) >$@
 
-$(OBJ_D)\sha256-x86_64.obj: $(TMP_D)\sha256-x86_64.asm
-	$(ASM) /Fo$@ $(TMP_D)\sha256-x86_64.asm
+$(OBJ_D)\sha256-586.obj: $(TMP_D)\sha256-586.asm
+	$(ASM) -o $@ $(TMP_D)\sha256-586.asm
 
-$(TMP_D)\sha512-x86_64.asm: crypto\sha\asm\sha512-x86_64.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\sha\asm\sha512-x86_64.pl $@
+$(TMP_D)\sha512-586.asm: crypto\sha\asm\sha512-586.pl
+	$(PERL) crypto\sha\asm\sha512-586.pl win32n $(CFLAG) >$@
 
-$(OBJ_D)\sha512-x86_64.obj: $(TMP_D)\sha512-x86_64.asm
-	$(ASM) /Fo$@ $(TMP_D)\sha512-x86_64.asm
-
-$(TMP_D)\sha1-mb-x86_64.asm: crypto\sha\asm\sha1-mb-x86_64.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\sha\asm\sha1-mb-x86_64.pl $@
-
-$(OBJ_D)\sha1-mb-x86_64.obj: $(TMP_D)\sha1-mb-x86_64.asm
-	$(ASM) /Fo$@ $(TMP_D)\sha1-mb-x86_64.asm
-
-$(TMP_D)\sha256-mb-x86_64.asm: crypto\sha\asm\sha256-mb-x86_64.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\sha\asm\sha256-mb-x86_64.pl $@
-
-$(OBJ_D)\sha256-mb-x86_64.obj: $(TMP_D)\sha256-mb-x86_64.asm
-	$(ASM) /Fo$@ $(TMP_D)\sha256-mb-x86_64.asm
-
-$(OBJ_D)\mdc2dgst.obj: $(SRC_D)\crypto\mdc2\mdc2dgst.c
-	$(CC) /Fo$(OBJ_D)\mdc2dgst.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\mdc2\mdc2dgst.c
-
-$(OBJ_D)\mdc2_one.obj: $(SRC_D)\crypto\mdc2\mdc2_one.c
-	$(CC) /Fo$(OBJ_D)\mdc2_one.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\mdc2\mdc2_one.c
+$(OBJ_D)\sha512-586.obj: $(TMP_D)\sha512-586.asm
+	$(ASM) -o $@ $(TMP_D)\sha512-586.asm
 
 $(OBJ_D)\hmac.obj: $(SRC_D)\crypto\hmac\hmac.c
 	$(CC) /Fo$(OBJ_D)\hmac.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\hmac\hmac.c
@@ -1385,6 +1389,12 @@ $(OBJ_D)\rmd_dgst.obj: $(SRC_D)\crypto\ripemd\rmd_dgst.c
 
 $(OBJ_D)\rmd_one.obj: $(SRC_D)\crypto\ripemd\rmd_one.c
 	$(CC) /Fo$(OBJ_D)\rmd_one.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\ripemd\rmd_one.c
+
+$(TMP_D)\rmd-586.asm: crypto\ripemd\asm\rmd-586.pl
+	$(PERL) crypto\ripemd\asm\rmd-586.pl win32n $(CFLAG) >$@
+
+$(OBJ_D)\rmd-586.obj: $(TMP_D)\rmd-586.asm
+	$(ASM) -o $@ $(TMP_D)\rmd-586.asm
 
 $(OBJ_D)\set_key.obj: $(SRC_D)\crypto\des\set_key.c
 	$(CC) /Fo$(OBJ_D)\set_key.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\des\set_key.c
@@ -1434,11 +1444,17 @@ $(OBJ_D)\qud_cksm.obj: $(SRC_D)\crypto\des\qud_cksm.c
 $(OBJ_D)\rand_key.obj: $(SRC_D)\crypto\des\rand_key.c
 	$(CC) /Fo$(OBJ_D)\rand_key.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\des\rand_key.c
 
-$(OBJ_D)\des_enc.obj: $(SRC_D)\crypto\des\des_enc.c
-	$(CC) /Fo$(OBJ_D)\des_enc.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\des\des_enc.c
+$(TMP_D)\des-586.asm: crypto\des\asm\des-586.pl
+	$(PERL) crypto\des\asm\des-586.pl win32n $(CFLAG) >$@
 
-$(OBJ_D)\fcrypt_b.obj: $(SRC_D)\crypto\des\fcrypt_b.c
-	$(CC) /Fo$(OBJ_D)\fcrypt_b.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\des\fcrypt_b.c
+$(OBJ_D)\des-586.obj: $(TMP_D)\des-586.asm
+	$(ASM) -o $@ $(TMP_D)\des-586.asm
+
+$(TMP_D)\crypt586.asm: crypto\des\asm\crypt586.pl
+	$(PERL) crypto\des\asm\crypt586.pl win32n $(CFLAG) >$@
+
+$(OBJ_D)\crypt586.obj: $(TMP_D)\crypt586.asm
+	$(ASM) -o $@ $(TMP_D)\crypt586.asm
 
 $(OBJ_D)\fcrypt.obj: $(SRC_D)\crypto\des\fcrypt.c
 	$(CC) /Fo$(OBJ_D)\fcrypt.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\des\fcrypt.c
@@ -1479,37 +1495,14 @@ $(OBJ_D)\rc2cfb64.obj: $(SRC_D)\crypto\rc2\rc2cfb64.c
 $(OBJ_D)\rc2ofb64.obj: $(SRC_D)\crypto\rc2\rc2ofb64.c
 	$(CC) /Fo$(OBJ_D)\rc2ofb64.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\rc2\rc2ofb64.c
 
-$(TMP_D)\rc4-x86_64.asm: crypto\rc4\asm\rc4-x86_64.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\rc4\asm\rc4-x86_64.pl $@
+$(TMP_D)\rc4-586.asm: crypto\rc4\asm\rc4-586.pl
+	$(PERL) crypto\rc4\asm\rc4-586.pl win32n $(CFLAG) >$@
 
-$(OBJ_D)\rc4-x86_64.obj: $(TMP_D)\rc4-x86_64.asm
-	$(ASM) /Fo$@ $(TMP_D)\rc4-x86_64.asm
-
-$(TMP_D)\rc4-md5-x86_64.asm: crypto\rc4\asm\rc4-md5-x86_64.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\rc4\asm\rc4-md5-x86_64.pl $@
-
-$(OBJ_D)\rc4-md5-x86_64.obj: $(TMP_D)\rc4-md5-x86_64.asm
-	$(ASM) /Fo$@ $(TMP_D)\rc4-md5-x86_64.asm
+$(OBJ_D)\rc4-586.obj: $(TMP_D)\rc4-586.asm
+	$(ASM) -o $@ $(TMP_D)\rc4-586.asm
 
 $(OBJ_D)\rc4_utl.obj: $(SRC_D)\crypto\rc4\rc4_utl.c
 	$(CC) /Fo$(OBJ_D)\rc4_utl.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\rc4\rc4_utl.c
-
-$(OBJ_D)\i_cbc.obj: $(SRC_D)\crypto\idea\i_cbc.c
-	$(CC) /Fo$(OBJ_D)\i_cbc.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\idea\i_cbc.c
-
-$(OBJ_D)\i_cfb64.obj: $(SRC_D)\crypto\idea\i_cfb64.c
-	$(CC) /Fo$(OBJ_D)\i_cfb64.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\idea\i_cfb64.c
-
-$(OBJ_D)\i_ofb64.obj: $(SRC_D)\crypto\idea\i_ofb64.c
-	$(CC) /Fo$(OBJ_D)\i_ofb64.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\idea\i_ofb64.c
-
-$(OBJ_D)\i_ecb.obj: $(SRC_D)\crypto\idea\i_ecb.c
-	$(CC) /Fo$(OBJ_D)\i_ecb.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\idea\i_ecb.c
-
-$(OBJ_D)\i_skey.obj: $(SRC_D)\crypto\idea\i_skey.c
-	$(CC) /Fo$(OBJ_D)\i_skey.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\idea\i_skey.c
 
 $(OBJ_D)\bf_skey.obj: $(SRC_D)\crypto\bf\bf_skey.c
 	$(CC) /Fo$(OBJ_D)\bf_skey.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\bf\bf_skey.c
@@ -1517,8 +1510,11 @@ $(OBJ_D)\bf_skey.obj: $(SRC_D)\crypto\bf\bf_skey.c
 $(OBJ_D)\bf_ecb.obj: $(SRC_D)\crypto\bf\bf_ecb.c
 	$(CC) /Fo$(OBJ_D)\bf_ecb.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\bf\bf_ecb.c
 
-$(OBJ_D)\bf_enc.obj: $(SRC_D)\crypto\bf\bf_enc.c
-	$(CC) /Fo$(OBJ_D)\bf_enc.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\bf\bf_enc.c
+$(TMP_D)\bf-586.asm: crypto\bf\asm\bf-586.pl
+	$(PERL) crypto\bf\asm\bf-586.pl win32n $(CFLAG) >$@
+
+$(OBJ_D)\bf-586.obj: $(TMP_D)\bf-586.asm
+	$(ASM) -o $@ $(TMP_D)\bf-586.asm
 
 $(OBJ_D)\bf_cfb64.obj: $(SRC_D)\crypto\bf\bf_cfb64.c
 	$(CC) /Fo$(OBJ_D)\bf_cfb64.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\bf\bf_cfb64.c
@@ -1532,8 +1528,11 @@ $(OBJ_D)\c_skey.obj: $(SRC_D)\crypto\cast\c_skey.c
 $(OBJ_D)\c_ecb.obj: $(SRC_D)\crypto\cast\c_ecb.c
 	$(CC) /Fo$(OBJ_D)\c_ecb.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\cast\c_ecb.c
 
-$(OBJ_D)\c_enc.obj: $(SRC_D)\crypto\cast\c_enc.c
-	$(CC) /Fo$(OBJ_D)\c_enc.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\cast\c_enc.c
+$(TMP_D)\cast-586.asm: crypto\cast\asm\cast-586.pl
+	$(PERL) crypto\cast\asm\cast-586.pl win32n $(CFLAG) >$@
+
+$(OBJ_D)\cast-586.obj: $(TMP_D)\cast-586.asm
+	$(ASM) -o $@ $(TMP_D)\cast-586.asm
 
 $(OBJ_D)\c_cfb64.obj: $(SRC_D)\crypto\cast\c_cfb64.c
 	$(CC) /Fo$(OBJ_D)\c_cfb64.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\cast\c_cfb64.c
@@ -1562,54 +1561,23 @@ $(OBJ_D)\aes_ige.obj: $(SRC_D)\crypto\aes\aes_ige.c
 $(OBJ_D)\aes_wrap.obj: $(SRC_D)\crypto\aes\aes_wrap.c
 	$(CC) /Fo$(OBJ_D)\aes_wrap.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\aes\aes_wrap.c
 
-$(TMP_D)\aes-x86_64.asm: crypto\aes\asm\aes-x86_64.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\aes\asm\aes-x86_64.pl $@
+$(TMP_D)\aes-586.asm: crypto\aes\asm\aes-586.pl
+	$(PERL) crypto\aes\asm\aes-586.pl win32n $(CFLAG) >$@
 
-$(OBJ_D)\aes-x86_64.obj: $(TMP_D)\aes-x86_64.asm
-	$(ASM) /Fo$@ $(TMP_D)\aes-x86_64.asm
+$(OBJ_D)\aes-586.obj: $(TMP_D)\aes-586.asm
+	$(ASM) -o $@ $(TMP_D)\aes-586.asm
 
-$(TMP_D)\vpaes-x86_64.asm: crypto\aes\asm\vpaes-x86_64.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\aes\asm\vpaes-x86_64.pl $@
+$(TMP_D)\vpaes-x86.asm: crypto\aes\asm\vpaes-x86.pl
+	$(PERL) crypto\aes\asm\vpaes-x86.pl win32n $(CFLAG) >$@
 
-$(OBJ_D)\vpaes-x86_64.obj: $(TMP_D)\vpaes-x86_64.asm
-	$(ASM) /Fo$@ $(TMP_D)\vpaes-x86_64.asm
+$(OBJ_D)\vpaes-x86.obj: $(TMP_D)\vpaes-x86.asm
+	$(ASM) -o $@ $(TMP_D)\vpaes-x86.asm
 
-$(TMP_D)\bsaes-x86_64.asm: crypto\aes\asm\bsaes-x86_64.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\aes\asm\bsaes-x86_64.pl $@
+$(TMP_D)\aesni-x86.asm: crypto\aes\asm\aesni-x86.pl
+	$(PERL) crypto\aes\asm\aesni-x86.pl win32n $(CFLAG) >$@
 
-$(OBJ_D)\bsaes-x86_64.obj: $(TMP_D)\bsaes-x86_64.asm
-	$(ASM) /Fo$@ $(TMP_D)\bsaes-x86_64.asm
-
-$(TMP_D)\aesni-x86_64.asm: crypto\aes\asm\aesni-x86_64.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\aes\asm\aesni-x86_64.pl $@
-
-$(OBJ_D)\aesni-x86_64.obj: $(TMP_D)\aesni-x86_64.asm
-	$(ASM) /Fo$@ $(TMP_D)\aesni-x86_64.asm
-
-$(TMP_D)\aesni-sha1-x86_64.asm: crypto\aes\asm\aesni-sha1-x86_64.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\aes\asm\aesni-sha1-x86_64.pl $@
-
-$(OBJ_D)\aesni-sha1-x86_64.obj: $(TMP_D)\aesni-sha1-x86_64.asm
-	$(ASM) /Fo$@ $(TMP_D)\aesni-sha1-x86_64.asm
-
-$(TMP_D)\aesni-sha256-x86_64.asm: crypto\aes\asm\aesni-sha256-x86_64.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\aes\asm\aesni-sha256-x86_64.pl $@
-
-$(OBJ_D)\aesni-sha256-x86_64.obj: $(TMP_D)\aesni-sha256-x86_64.asm
-	$(ASM) /Fo$@ $(TMP_D)\aesni-sha256-x86_64.asm
-
-$(TMP_D)\aesni-mb-x86_64.asm: crypto\aes\asm\aesni-mb-x86_64.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\aes\asm\aesni-mb-x86_64.pl $@
-
-$(OBJ_D)\aesni-mb-x86_64.obj: $(TMP_D)\aesni-mb-x86_64.asm
-	$(ASM) /Fo$@ $(TMP_D)\aesni-mb-x86_64.asm
+$(OBJ_D)\aesni-x86.obj: $(TMP_D)\aesni-x86.asm
+	$(ASM) -o $@ $(TMP_D)\aesni-x86.asm
 
 $(OBJ_D)\cmll_ecb.obj: $(SRC_D)\crypto\camellia\cmll_ecb.c
 	$(CC) /Fo$(OBJ_D)\cmll_ecb.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\camellia\cmll_ecb.c
@@ -1626,15 +1594,11 @@ $(OBJ_D)\cmll_ctr.obj: $(SRC_D)\crypto\camellia\cmll_ctr.c
 $(OBJ_D)\cmll_utl.obj: $(SRC_D)\crypto\camellia\cmll_utl.c
 	$(CC) /Fo$(OBJ_D)\cmll_utl.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\camellia\cmll_utl.c
 
-$(TMP_D)\cmll-x86_64.asm: crypto\camellia\asm\cmll-x86_64.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\camellia\asm\cmll-x86_64.pl $@
+$(TMP_D)\cmll-x86.asm: crypto\camellia\asm\cmll-x86.pl
+	$(PERL) crypto\camellia\asm\cmll-x86.pl win32n $(CFLAG) >$@
 
-$(OBJ_D)\cmll-x86_64.obj: $(TMP_D)\cmll-x86_64.asm
-	$(ASM) /Fo$@ $(TMP_D)\cmll-x86_64.asm
-
-$(OBJ_D)\cmll_misc.obj: $(SRC_D)\crypto\camellia\cmll_misc.c
-	$(CC) /Fo$(OBJ_D)\cmll_misc.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\camellia\cmll_misc.c
+$(OBJ_D)\cmll-x86.obj: $(TMP_D)\cmll-x86.asm
+	$(ASM) -o $@ $(TMP_D)\cmll-x86.asm
 
 $(OBJ_D)\seed.obj: $(SRC_D)\crypto\seed\seed.c
 	$(CC) /Fo$(OBJ_D)\seed.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\seed\seed.c
@@ -1678,19 +1642,11 @@ $(OBJ_D)\xts128.obj: $(SRC_D)\crypto\modes\xts128.c
 $(OBJ_D)\wrap128.obj: $(SRC_D)\crypto\modes\wrap128.c
 	$(CC) /Fo$(OBJ_D)\wrap128.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\modes\wrap128.c
 
-$(TMP_D)\ghash-x86_64.asm: crypto\modes\asm\ghash-x86_64.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\modes\asm\ghash-x86_64.pl $@
+$(TMP_D)\ghash-x86.asm: crypto\modes\asm\ghash-x86.pl
+	$(PERL) crypto\modes\asm\ghash-x86.pl win32n $(CFLAG) >$@
 
-$(OBJ_D)\ghash-x86_64.obj: $(TMP_D)\ghash-x86_64.asm
-	$(ASM) /Fo$@ $(TMP_D)\ghash-x86_64.asm
-
-$(TMP_D)\aesni-gcm-x86_64.asm: crypto\modes\asm\aesni-gcm-x86_64.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\modes\asm\aesni-gcm-x86_64.pl $@
-
-$(OBJ_D)\aesni-gcm-x86_64.obj: $(TMP_D)\aesni-gcm-x86_64.asm
-	$(ASM) /Fo$@ $(TMP_D)\aesni-gcm-x86_64.asm
+$(OBJ_D)\ghash-x86.obj: $(TMP_D)\ghash-x86.asm
+	$(ASM) -o $@ $(TMP_D)\ghash-x86.asm
 
 $(OBJ_D)\bn_add.obj: $(SRC_D)\crypto\bn\bn_add.c
 	$(CC) /Fo$(OBJ_D)\bn_add.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\bn\bn_add.c
@@ -1746,46 +1702,29 @@ $(OBJ_D)\bn_err.obj: $(SRC_D)\crypto\bn\bn_err.c
 $(OBJ_D)\bn_sqr.obj: $(SRC_D)\crypto\bn\bn_sqr.c
 	$(CC) /Fo$(OBJ_D)\bn_sqr.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\bn\bn_sqr.c
 
-$(OBJ_D)\bn_asm.obj: $(SRC_D)\crypto\bn\bn_asm.c
-	$(CC) /Fo$(OBJ_D)\bn_asm.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\bn\bn_asm.c
+$(TMP_D)\bn-586.asm: crypto\bn\asm\bn-586.pl
+	$(PERL) crypto\bn\asm\bn-586.pl win32n $(CFLAG) >$@
 
-$(TMP_D)\x86_64-mont.asm: crypto\bn\asm\x86_64-mont.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\bn\asm\x86_64-mont.pl $@
+$(OBJ_D)\bn-586.obj: $(TMP_D)\bn-586.asm
+	$(ASM) -o $@ $(TMP_D)\bn-586.asm
 
-$(OBJ_D)\x86_64-mont.obj: $(TMP_D)\x86_64-mont.asm
-	$(ASM) /Fo$@ $(TMP_D)\x86_64-mont.asm
+$(TMP_D)\co-586.asm: crypto\bn\asm\co-586.pl
+	$(PERL) crypto\bn\asm\co-586.pl win32n $(CFLAG) >$@
 
-$(TMP_D)\x86_64-mont5.asm: crypto\bn\asm\x86_64-mont5.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\bn\asm\x86_64-mont5.pl $@
+$(OBJ_D)\co-586.obj: $(TMP_D)\co-586.asm
+	$(ASM) -o $@ $(TMP_D)\co-586.asm
 
-$(OBJ_D)\x86_64-mont5.obj: $(TMP_D)\x86_64-mont5.asm
-	$(ASM) /Fo$@ $(TMP_D)\x86_64-mont5.asm
+$(TMP_D)\x86-mont.asm: crypto\bn\asm\x86-mont.pl
+	$(PERL) crypto\bn\asm\x86-mont.pl win32n $(CFLAG) >$@
 
-$(TMP_D)\x86_64-gf2m.asm: crypto\bn\asm\x86_64-gf2m.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\bn\asm\x86_64-gf2m.pl $@
+$(OBJ_D)\x86-mont.obj: $(TMP_D)\x86-mont.asm
+	$(ASM) -o $@ $(TMP_D)\x86-mont.asm
 
-$(OBJ_D)\x86_64-gf2m.obj: $(TMP_D)\x86_64-gf2m.asm
-	$(ASM) /Fo$@ $(TMP_D)\x86_64-gf2m.asm
+$(TMP_D)\x86-gf2m.asm: crypto\bn\asm\x86-gf2m.pl
+	$(PERL) crypto\bn\asm\x86-gf2m.pl win32n $(CFLAG) >$@
 
-$(OBJ_D)\rsaz_exp.obj: $(SRC_D)\crypto\bn\rsaz_exp.c
-	$(CC) /Fo$(OBJ_D)\rsaz_exp.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\bn\rsaz_exp.c
-
-$(TMP_D)\rsaz-x86_64.asm: crypto\bn\asm\rsaz-x86_64.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\bn\asm\rsaz-x86_64.pl $@
-
-$(OBJ_D)\rsaz-x86_64.obj: $(TMP_D)\rsaz-x86_64.asm
-	$(ASM) /Fo$@ $(TMP_D)\rsaz-x86_64.asm
-
-$(TMP_D)\rsaz-avx2.asm: crypto\bn\asm\rsaz-avx2.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\bn\asm\rsaz-avx2.pl $@
-
-$(OBJ_D)\rsaz-avx2.obj: $(TMP_D)\rsaz-avx2.asm
-	$(ASM) /Fo$@ $(TMP_D)\rsaz-avx2.asm
+$(OBJ_D)\x86-gf2m.obj: $(TMP_D)\x86-gf2m.asm
+	$(ASM) -o $@ $(TMP_D)\x86-gf2m.asm
 
 $(OBJ_D)\bn_recp.obj: $(SRC_D)\crypto\bn\bn_recp.c
 	$(CC) /Fo$(OBJ_D)\bn_recp.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\bn\bn_recp.c
@@ -2045,16 +1984,6 @@ $(OBJ_D)\ec2_oct.obj: $(SRC_D)\crypto\ec\ec2_oct.c
 $(OBJ_D)\ec_oct.obj: $(SRC_D)\crypto\ec\ec_oct.c
 	$(CC) /Fo$(OBJ_D)\ec_oct.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\ec\ec_oct.c
 
-$(OBJ_D)\ecp_nistz256.obj: $(SRC_D)\crypto\ec\ecp_nistz256.c
-	$(CC) /Fo$(OBJ_D)\ecp_nistz256.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\ec\ecp_nistz256.c
-
-$(TMP_D)\ecp_nistz256-x86_64.asm: crypto\ec\asm\ecp_nistz256-x86_64.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\ec\asm\ecp_nistz256-x86_64.pl $@
-
-$(OBJ_D)\ecp_nistz256-x86_64.obj: $(TMP_D)\ecp_nistz256-x86_64.asm
-	$(ASM) /Fo$@ $(TMP_D)\ecp_nistz256-x86_64.asm
-
 $(OBJ_D)\ech_lib.obj: $(SRC_D)\crypto\ecdh\ech_lib.c
 	$(CC) /Fo$(OBJ_D)\ech_lib.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\ecdh\ech_lib.c
 
@@ -2294,9 +2223,6 @@ $(OBJ_D)\m_dss.obj: $(SRC_D)\crypto\evp\m_dss.c
 
 $(OBJ_D)\m_dss1.obj: $(SRC_D)\crypto\evp\m_dss1.c
 	$(CC) /Fo$(OBJ_D)\m_dss1.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\evp\m_dss1.c
-
-$(OBJ_D)\m_mdc2.obj: $(SRC_D)\crypto\evp\m_mdc2.c
-	$(CC) /Fo$(OBJ_D)\m_mdc2.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\evp\m_mdc2.c
 
 $(OBJ_D)\m_ripemd.obj: $(SRC_D)\crypto\evp\m_ripemd.c
 	$(CC) /Fo$(OBJ_D)\m_ripemd.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\evp\m_ripemd.c
@@ -3114,12 +3040,14 @@ $(OBJ_D)\pqueue.obj: $(SRC_D)\crypto\pqueue\pqueue.c
 $(OBJ_D)\wp_dgst.obj: $(SRC_D)\crypto\whrlpool\wp_dgst.c
 	$(CC) /Fo$(OBJ_D)\wp_dgst.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\whrlpool\wp_dgst.c
 
-$(TMP_D)\wp-x86_64.asm: crypto\whrlpool\asm\wp-x86_64.pl
-	set ASM=$(ASM)
-	$(PERL) crypto\whrlpool\asm\wp-x86_64.pl $@
+$(OBJ_D)\wp_block.obj: $(SRC_D)\crypto\whrlpool\wp_block.c
+	$(CC) /Fo$(OBJ_D)\wp_block.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\whrlpool\wp_block.c
 
-$(OBJ_D)\wp-x86_64.obj: $(TMP_D)\wp-x86_64.asm
-	$(ASM) /Fo$@ $(TMP_D)\wp-x86_64.asm
+$(TMP_D)\wp-mmx.asm: crypto\whrlpool\asm\wp-mmx.pl
+	$(PERL) crypto\whrlpool\asm\wp-mmx.pl win32n $(CFLAG) >$@
+
+$(OBJ_D)\wp-mmx.obj: $(TMP_D)\wp-mmx.asm
+	$(ASM) -o $@ $(TMP_D)\wp-mmx.asm
 
 $(OBJ_D)\ts_err.obj: $(SRC_D)\crypto\ts\ts_err.c
 	$(CC) /Fo$(OBJ_D)\ts_err.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\ts\ts_err.c
@@ -3159,87 +3087,6 @@ $(OBJ_D)\srp_lib.obj: $(SRC_D)\crypto\srp\srp_lib.c
 
 $(OBJ_D)\srp_vfy.obj: $(SRC_D)\crypto\srp\srp_vfy.c
 	$(CC) /Fo$(OBJ_D)\srp_vfy.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\crypto\srp\srp_vfy.c
-
-$(OBJ_D)\e_4758cca.obj: $(SRC_D)\engines\e_4758cca.c
-	$(CC) /Fo$(OBJ_D)\e_4758cca.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\e_4758cca.c
-
-$(OBJ_D)\e_aep.obj: $(SRC_D)\engines\e_aep.c
-	$(CC) /Fo$(OBJ_D)\e_aep.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\e_aep.c
-
-$(OBJ_D)\e_atalla.obj: $(SRC_D)\engines\e_atalla.c
-	$(CC) /Fo$(OBJ_D)\e_atalla.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\e_atalla.c
-
-$(OBJ_D)\e_cswift.obj: $(SRC_D)\engines\e_cswift.c
-	$(CC) /Fo$(OBJ_D)\e_cswift.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\e_cswift.c
-
-$(OBJ_D)\e_gmp.obj: $(SRC_D)\engines\e_gmp.c
-	$(CC) /Fo$(OBJ_D)\e_gmp.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\e_gmp.c
-
-$(OBJ_D)\e_chil.obj: $(SRC_D)\engines\e_chil.c
-	$(CC) /Fo$(OBJ_D)\e_chil.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\e_chil.c
-
-$(OBJ_D)\e_nuron.obj: $(SRC_D)\engines\e_nuron.c
-	$(CC) /Fo$(OBJ_D)\e_nuron.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\e_nuron.c
-
-$(OBJ_D)\e_sureware.obj: $(SRC_D)\engines\e_sureware.c
-	$(CC) /Fo$(OBJ_D)\e_sureware.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\e_sureware.c
-
-$(OBJ_D)\e_ubsec.obj: $(SRC_D)\engines\e_ubsec.c
-	$(CC) /Fo$(OBJ_D)\e_ubsec.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\e_ubsec.c
-
-$(OBJ_D)\e_padlock.obj: $(SRC_D)\engines\e_padlock.c
-	$(CC) /Fo$(OBJ_D)\e_padlock.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\e_padlock.c
-
-$(OBJ_D)\e_capi.obj: $(SRC_D)\engines\e_capi.c
-	$(CC) /Fo$(OBJ_D)\e_capi.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\e_capi.c
-
-$(OBJ_D)\e_gost_err.obj: $(SRC_D)\engines\ccgost\e_gost_err.c
-	$(CC) /Fo$(OBJ_D)\e_gost_err.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\ccgost\e_gost_err.c
-
-$(OBJ_D)\gost2001_keyx.obj: $(SRC_D)\engines\ccgost\gost2001_keyx.c
-	$(CC) /Fo$(OBJ_D)\gost2001_keyx.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\ccgost\gost2001_keyx.c
-
-$(OBJ_D)\gost2001.obj: $(SRC_D)\engines\ccgost\gost2001.c
-	$(CC) /Fo$(OBJ_D)\gost2001.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\ccgost\gost2001.c
-
-$(OBJ_D)\gost89.obj: $(SRC_D)\engines\ccgost\gost89.c
-	$(CC) /Fo$(OBJ_D)\gost89.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\ccgost\gost89.c
-
-$(OBJ_D)\gost94_keyx.obj: $(SRC_D)\engines\ccgost\gost94_keyx.c
-	$(CC) /Fo$(OBJ_D)\gost94_keyx.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\ccgost\gost94_keyx.c
-
-$(OBJ_D)\gost_ameth.obj: $(SRC_D)\engines\ccgost\gost_ameth.c
-	$(CC) /Fo$(OBJ_D)\gost_ameth.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\ccgost\gost_ameth.c
-
-$(OBJ_D)\gost_asn1.obj: $(SRC_D)\engines\ccgost\gost_asn1.c
-	$(CC) /Fo$(OBJ_D)\gost_asn1.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\ccgost\gost_asn1.c
-
-$(OBJ_D)\gost_crypt.obj: $(SRC_D)\engines\ccgost\gost_crypt.c
-	$(CC) /Fo$(OBJ_D)\gost_crypt.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\ccgost\gost_crypt.c
-
-$(OBJ_D)\gost_ctl.obj: $(SRC_D)\engines\ccgost\gost_ctl.c
-	$(CC) /Fo$(OBJ_D)\gost_ctl.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\ccgost\gost_ctl.c
-
-$(OBJ_D)\gost_eng.obj: $(SRC_D)\engines\ccgost\gost_eng.c
-	$(CC) /Fo$(OBJ_D)\gost_eng.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\ccgost\gost_eng.c
-
-$(OBJ_D)\gosthash.obj: $(SRC_D)\engines\ccgost\gosthash.c
-	$(CC) /Fo$(OBJ_D)\gosthash.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\ccgost\gosthash.c
-
-$(OBJ_D)\gost_keywrap.obj: $(SRC_D)\engines\ccgost\gost_keywrap.c
-	$(CC) /Fo$(OBJ_D)\gost_keywrap.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\ccgost\gost_keywrap.c
-
-$(OBJ_D)\gost_md.obj: $(SRC_D)\engines\ccgost\gost_md.c
-	$(CC) /Fo$(OBJ_D)\gost_md.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\ccgost\gost_md.c
-
-$(OBJ_D)\gost_params.obj: $(SRC_D)\engines\ccgost\gost_params.c
-	$(CC) /Fo$(OBJ_D)\gost_params.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\ccgost\gost_params.c
-
-$(OBJ_D)\gost_pmeth.obj: $(SRC_D)\engines\ccgost\gost_pmeth.c
-	$(CC) /Fo$(OBJ_D)\gost_pmeth.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\ccgost\gost_pmeth.c
-
-$(OBJ_D)\gost_sign.obj: $(SRC_D)\engines\ccgost\gost_sign.c
-	$(CC) /Fo$(OBJ_D)\gost_sign.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBCRYPTO -c $(SRC_D)\engines\ccgost\gost_sign.c
 
 $(OBJ_D)\s2_meth.obj: $(SRC_D)\ssl\s2_meth.c
 	$(CC) /Fo$(OBJ_D)\s2_meth.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBSSL -c $(SRC_D)\ssl\s2_meth.c
@@ -3439,12 +3286,6 @@ $(TEST_D)\sha512t.exe: $(OBJ_D)\sha512t.obj $(LIBS_DEP)
 <<
 	IF EXIST $@.manifest mt -nologo -manifest $@.manifest -outputresource:$@;1
 
-$(TEST_D)\mdc2test.exe: $(OBJ_D)\mdc2test.obj $(LIBS_DEP)
-	$(LINK_CMD) $(LFLAGS) /out:$(TEST_D)\mdc2test.exe @<<
-	$(APP_EX_OBJ) $(OBJ_D)\mdc2test.obj $(L_LIBS) $(EX_LIBS)
-<<
-	IF EXIST $@.manifest mt -nologo -manifest $@.manifest -outputresource:$@;1
-
 $(TEST_D)\hmactest.exe: $(OBJ_D)\hmactest.obj $(LIBS_DEP)
 	$(LINK_CMD) $(LFLAGS) /out:$(TEST_D)\hmactest.exe @<<
 	$(APP_EX_OBJ) $(OBJ_D)\hmactest.obj $(L_LIBS) $(EX_LIBS)
@@ -3472,12 +3313,6 @@ $(TEST_D)\rc2test.exe: $(OBJ_D)\rc2test.obj $(LIBS_DEP)
 $(TEST_D)\rc4test.exe: $(OBJ_D)\rc4test.obj $(LIBS_DEP)
 	$(LINK_CMD) $(LFLAGS) /out:$(TEST_D)\rc4test.exe @<<
 	$(APP_EX_OBJ) $(OBJ_D)\rc4test.obj $(L_LIBS) $(EX_LIBS)
-<<
-	IF EXIST $@.manifest mt -nologo -manifest $@.manifest -outputresource:$@;1
-
-$(TEST_D)\ideatest.exe: $(OBJ_D)\ideatest.obj $(LIBS_DEP)
-	$(LINK_CMD) $(LFLAGS) /out:$(TEST_D)\ideatest.exe @<<
-	$(APP_EX_OBJ) $(OBJ_D)\ideatest.obj $(L_LIBS) $(EX_LIBS)
 <<
 	IF EXIST $@.manifest mt -nologo -manifest $@.manifest -outputresource:$@;1
 
@@ -3619,6 +3454,116 @@ $(TEST_D)\igetest.exe: $(OBJ_D)\igetest.obj $(LIBS_DEP)
 <<
 	IF EXIST $@.manifest mt -nologo -manifest $@.manifest -outputresource:$@;1
 
+$(OBJ_D)\e_4758cca.obj: $(SRC_D)\engines\e_4758cca.c
+	$(CC) /Fo$(OBJ_D)\e_4758cca.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBSSL -c $(SRC_D)\engines\e_4758cca.c
+
+$(ENG_D)\4758cca.dll: $(OBJ_D)\e_4758cca.obj
+	$(LINK_CMD) $(MLFLAGS) /out:$(ENG_D)\4758cca.dll  @<<
+  $(SHLIB_EX_OBJ) $(OBJ_D)\e_4758cca.obj  $(L_CRYPTO) $(EX_LIBS)
+<<
+	IF EXIST $@.manifest mt -nologo -manifest $@.manifest -outputresource:$@;2
+
+
+$(OBJ_D)\e_aep.obj: $(SRC_D)\engines\e_aep.c
+	$(CC) /Fo$(OBJ_D)\e_aep.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBSSL -c $(SRC_D)\engines\e_aep.c
+
+$(ENG_D)\aep.dll: $(OBJ_D)\e_aep.obj
+	$(LINK_CMD) $(MLFLAGS) /out:$(ENG_D)\aep.dll  @<<
+  $(SHLIB_EX_OBJ) $(OBJ_D)\e_aep.obj  $(L_CRYPTO) $(EX_LIBS)
+<<
+	IF EXIST $@.manifest mt -nologo -manifest $@.manifest -outputresource:$@;2
+
+
+$(OBJ_D)\e_atalla.obj: $(SRC_D)\engines\e_atalla.c
+	$(CC) /Fo$(OBJ_D)\e_atalla.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBSSL -c $(SRC_D)\engines\e_atalla.c
+
+$(ENG_D)\atalla.dll: $(OBJ_D)\e_atalla.obj
+	$(LINK_CMD) $(MLFLAGS) /out:$(ENG_D)\atalla.dll  @<<
+  $(SHLIB_EX_OBJ) $(OBJ_D)\e_atalla.obj  $(L_CRYPTO) $(EX_LIBS)
+<<
+	IF EXIST $@.manifest mt -nologo -manifest $@.manifest -outputresource:$@;2
+
+
+$(OBJ_D)\e_cswift.obj: $(SRC_D)\engines\e_cswift.c
+	$(CC) /Fo$(OBJ_D)\e_cswift.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBSSL -c $(SRC_D)\engines\e_cswift.c
+
+$(ENG_D)\cswift.dll: $(OBJ_D)\e_cswift.obj
+	$(LINK_CMD) $(MLFLAGS) /out:$(ENG_D)\cswift.dll  @<<
+  $(SHLIB_EX_OBJ) $(OBJ_D)\e_cswift.obj  $(L_CRYPTO) $(EX_LIBS)
+<<
+	IF EXIST $@.manifest mt -nologo -manifest $@.manifest -outputresource:$@;2
+
+
+$(OBJ_D)\e_gmp.obj: $(SRC_D)\engines\e_gmp.c
+	$(CC) /Fo$(OBJ_D)\e_gmp.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBSSL -c $(SRC_D)\engines\e_gmp.c
+
+$(ENG_D)\gmp.dll: $(OBJ_D)\e_gmp.obj
+	$(LINK_CMD) $(MLFLAGS) /out:$(ENG_D)\gmp.dll  @<<
+  $(SHLIB_EX_OBJ) $(OBJ_D)\e_gmp.obj  $(L_CRYPTO) $(EX_LIBS)
+<<
+	IF EXIST $@.manifest mt -nologo -manifest $@.manifest -outputresource:$@;2
+
+
+$(OBJ_D)\e_chil.obj: $(SRC_D)\engines\e_chil.c
+	$(CC) /Fo$(OBJ_D)\e_chil.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBSSL -c $(SRC_D)\engines\e_chil.c
+
+$(ENG_D)\chil.dll: $(OBJ_D)\e_chil.obj
+	$(LINK_CMD) $(MLFLAGS) /out:$(ENG_D)\chil.dll  @<<
+  $(SHLIB_EX_OBJ) $(OBJ_D)\e_chil.obj  $(L_CRYPTO) $(EX_LIBS)
+<<
+	IF EXIST $@.manifest mt -nologo -manifest $@.manifest -outputresource:$@;2
+
+
+$(OBJ_D)\e_nuron.obj: $(SRC_D)\engines\e_nuron.c
+	$(CC) /Fo$(OBJ_D)\e_nuron.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBSSL -c $(SRC_D)\engines\e_nuron.c
+
+$(ENG_D)\nuron.dll: $(OBJ_D)\e_nuron.obj
+	$(LINK_CMD) $(MLFLAGS) /out:$(ENG_D)\nuron.dll  @<<
+  $(SHLIB_EX_OBJ) $(OBJ_D)\e_nuron.obj  $(L_CRYPTO) $(EX_LIBS)
+<<
+	IF EXIST $@.manifest mt -nologo -manifest $@.manifest -outputresource:$@;2
+
+
+$(OBJ_D)\e_sureware.obj: $(SRC_D)\engines\e_sureware.c
+	$(CC) /Fo$(OBJ_D)\e_sureware.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBSSL -c $(SRC_D)\engines\e_sureware.c
+
+$(ENG_D)\sureware.dll: $(OBJ_D)\e_sureware.obj
+	$(LINK_CMD) $(MLFLAGS) /out:$(ENG_D)\sureware.dll  @<<
+  $(SHLIB_EX_OBJ) $(OBJ_D)\e_sureware.obj  $(L_CRYPTO) $(EX_LIBS)
+<<
+	IF EXIST $@.manifest mt -nologo -manifest $@.manifest -outputresource:$@;2
+
+
+$(OBJ_D)\e_ubsec.obj: $(SRC_D)\engines\e_ubsec.c
+	$(CC) /Fo$(OBJ_D)\e_ubsec.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBSSL -c $(SRC_D)\engines\e_ubsec.c
+
+$(ENG_D)\ubsec.dll: $(OBJ_D)\e_ubsec.obj
+	$(LINK_CMD) $(MLFLAGS) /out:$(ENG_D)\ubsec.dll  @<<
+  $(SHLIB_EX_OBJ) $(OBJ_D)\e_ubsec.obj  $(L_CRYPTO) $(EX_LIBS)
+<<
+	IF EXIST $@.manifest mt -nologo -manifest $@.manifest -outputresource:$@;2
+
+
+$(OBJ_D)\e_padlock.obj: $(SRC_D)\engines\e_padlock.c
+	$(CC) /Fo$(OBJ_D)\e_padlock.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBSSL -c $(SRC_D)\engines\e_padlock.c
+
+$(ENG_D)\padlock.dll: $(OBJ_D)\e_padlock.obj
+	$(LINK_CMD) $(MLFLAGS) /out:$(ENG_D)\padlock.dll  @<<
+  $(SHLIB_EX_OBJ) $(OBJ_D)\e_padlock.obj  $(L_CRYPTO) $(EX_LIBS)
+<<
+	IF EXIST $@.manifest mt -nologo -manifest $@.manifest -outputresource:$@;2
+
+
+$(OBJ_D)\e_capi.obj: $(SRC_D)\engines\e_capi.c
+	$(CC) /Fo$(OBJ_D)\e_capi.obj  $(SHLIB_CFLAGS) -DOPENSSL_BUILD_SHLIBSSL -c $(SRC_D)\engines\e_capi.c
+
+$(ENG_D)\capi.dll: $(OBJ_D)\e_capi.obj
+	$(LINK_CMD) $(MLFLAGS) /out:$(ENG_D)\capi.dll  @<<
+  $(SHLIB_EX_OBJ) $(OBJ_D)\e_capi.obj  $(L_CRYPTO) $(EX_LIBS)
+<<
+	IF EXIST $@.manifest mt -nologo -manifest $@.manifest -outputresource:$@;2
+
+
 $(O_SSL): $(SSLOBJ)
 	$(LINK_CMD) $(MLFLAGS) /out:$(O_SSL) /def:ms/SSLEAY32.def @<<
   $(SHLIB_EX_OBJ) $(SSLOBJ)  $(L_CRYPTO) $(EX_LIBS)
@@ -3629,6 +3574,13 @@ $(O_SSL): $(SSLOBJ)
 $(O_CRYPTO): $(CRYPTOOBJ)
 	$(LINK_CMD) $(MLFLAGS) /out:$(O_CRYPTO) /def:ms/LIBEAY32.def @<<
   $(SHLIB_EX_OBJ) $(CRYPTOOBJ)  $(EX_LIBS)
+<<
+	IF EXIST $@.manifest mt -nologo -manifest $@.manifest -outputresource:$@;2
+
+
+$(ENG_D)\gost.dll: $(GOSTOBJ)
+	$(LINK_CMD) $(MLFLAGS) /out:$(ENG_D)\gost.dll  @<<
+  $(SHLIB_EX_OBJ) $(GOSTOBJ)  $(L_CRYPTO) $(EX_LIBS)
 <<
 	IF EXIST $@.manifest mt -nologo -manifest $@.manifest -outputresource:$@;2
 
