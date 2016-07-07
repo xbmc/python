@@ -38,27 +38,18 @@
     <ProjectGuid>{7E85ECCF-A72C-4DA4-9E52-884508E80BA1}</ProjectGuid>
     <RootNamespace>tk</RootNamespace>
   </PropertyGroup>
-
   <Import Project="python.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="tcltk.props" />
-
   <PropertyGroup Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <OutDir>$(tcltkDir)</OutDir>
     <TargetPath>$(OutDir)bin\$(tkDLLName)</TargetPath>
   </PropertyGroup>
-
   <ItemGroup>
-    <ExpectedOutputs Include="
-        $(OutDir)bin\$(tkDLLName);
-        $(OutDir)include\tk.h;
-        $(OutDir)lib\$(tkLibName);
-        $(OutDir)lib\tk$(TkMajorVersion).$(TkMinorVersion)" />
+    <ExpectedOutputs Include="&#xA;        $(OutDir)bin\$(tkDLLName);&#xA;        $(OutDir)include\tk.h;&#xA;        $(OutDir)lib\$(tkLibName);&#xA;        $(OutDir)lib\tk$(TkMajorVersion).$(TkMinorVersion)" />
   </ItemGroup>
-
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-
   <PropertyGroup>
     <TkOpts>msvcrt</TkOpts>
     <TkOpts Condition="$(Configuration) == 'Debug'">symbols,msvcrt</TkOpts>
@@ -75,18 +66,10 @@ nmake /nologo -f makefile.vc RC=rc MACHINE=$(TclMachine) OPTS=$(TkOpts) $(TkDirs
 nmake /nologo -f makefile.vc RC=rc MACHINE=$(TclMachine) OPTS=$(TkOpts) $(TkDirs) $(DebugFlags) install-binaries install-libraries
 </NMakeBuildCommandLine>
   </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="tcl.vcxproj">
-      <Project>{b5fd6f1d-129e-4bff-9340-03606fac7283}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-
   <Target Name="CopyDll" Inputs="$(OutDir)\bin\$(tkDLLName)" Outputs="$(BuildPath)$(tkDLLName)" AfterTargets="Build">
     <Copy SourceFiles="$(OutDir)\bin\$(tkDLLName)" DestinationFiles="$(BuildPath)$(tkDLLName)" />
   </Target>
-
   <Target Name="Clean" />
   <Target Name="CleanAll">
     <Delete Files="$(TargetPath);$(BuildPath)$(tkDLLName)" />
