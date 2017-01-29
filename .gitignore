@@ -35,3 +35,7 @@
 *.VC.db
 *.VC.opendb
 externals/openssl-1.0.2j/tmp/
+*.exp
+*.pyd
+*.pyc
+build/
