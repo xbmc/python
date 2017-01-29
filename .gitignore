@@ -39,3 +39,6 @@ PCbuild/obj/
 PCbuild/amd64/
 externals/openss-1.0.2h/tmp/
 externals/openssl-1.0.2h/tmp/
+*.exp
+*.pyd
+build/
