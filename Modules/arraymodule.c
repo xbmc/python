@@ -620,8 +620,10 @@ array_slice(arrayobject *a, Py_ssize_t ilow, Py_ssize_t ihigh)
     np = (arrayobject *) newarrayobject(&Arraytype, ihigh - ilow, a->ob_descr);
     if (np == NULL)
         return NULL;
-    memcpy(np->ob_item, a->ob_item + ilow * a->ob_descr->itemsize,
-           (ihigh-ilow) * a->ob_descr->itemsize);
+    if (ihigh > ilow) {
+        memcpy(np->ob_item, a->ob_item + ilow * a->ob_descr->itemsize,
+               (ihigh-ilow) * a->ob_descr->itemsize);
+    }
     return (PyObject *)np;
 }
 
@@ -660,9 +662,13 @@ array_concat(arrayobject *a, PyObject *bb)
     if (np == NULL) {
         return NULL;
     }
-    memcpy(np->ob_item, a->ob_item, Py_SIZE(a)*a->ob_descr->itemsize);
-    memcpy(np->ob_item + Py_SIZE(a)*a->ob_descr->itemsize,
-           b->ob_item, Py_SIZE(b)*b->ob_descr->itemsize);
+    if (Py_SIZE(a) > 0) {
+        memcpy(np->ob_item, a->ob_item, Py_SIZE(a)*a->ob_descr->itemsize);
+    }
+    if (Py_SIZE(b) > 0) {
+        memcpy(np->ob_item + Py_SIZE(a)*a->ob_descr->itemsize,
+               b->ob_item, Py_SIZE(b)*b->ob_descr->itemsize);
+    }
     return (PyObject *)np;
 #undef b
 }
@@ -684,6 +690,8 @@ array_repeat(arrayobject *a, Py_ssize_t n)
     np = (arrayobject *) newarrayobject(&Arraytype, size, a->ob_descr);
     if (np == NULL)
         return NULL;
+    if (size == 0)
+        return (PyObject *)np;
     p = np->ob_item;
     nbytes = Py_SIZE(a) * a->ob_descr->itemsize;
     for (i = 0; i < n; i++) {
@@ -838,8 +846,10 @@ array_do_extend(arrayobject *self, PyObject *bb)
         PyErr_NoMemory();
         return -1;
     }
-    memcpy(self->ob_item + Py_SIZE(self)*self->ob_descr->itemsize,
-           b->ob_item, Py_SIZE(b)*b->ob_descr->itemsize);
+    if (Py_SIZE(b) > 0) {
+        memcpy(self->ob_item + Py_SIZE(self)*self->ob_descr->itemsize,
+               b->ob_item, Py_SIZE(b)*b->ob_descr->itemsize);
+    }
     Py_SIZE(self) = size;
     self->allocated = size;
 
@@ -1067,13 +1077,25 @@ Insert a new item x into the array before position i.");
 static PyObject *
 array_buffer_info(arrayobject *self, PyObject *unused)
 {
-    PyObject* retval = NULL;
+    PyObject *retval = NULL, *v;
+
     retval = PyTuple_New(2);
     if (!retval)
         return NULL;
 
-    PyTuple_SET_ITEM(retval, 0, PyLong_FromVoidPtr(self->ob_item));
-    PyTuple_SET_ITEM(retval, 1, PyInt_FromLong((long)(Py_SIZE(self))));
+    v = PyLong_FromVoidPtr(self->ob_item);
+    if (v == NULL) {
+        Py_DECREF(retval);
+        return NULL;
+    }
+    PyTuple_SET_ITEM(retval, 0, v);
+
+    v = PyInt_FromSsize_t(Py_SIZE(self));
+    if (v == NULL) {
+        Py_DECREF(retval);
+        return NULL;
+    }
+    PyTuple_SET_ITEM(retval, 1, v);
 
     return retval;
 }

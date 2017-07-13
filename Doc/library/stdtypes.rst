@@ -266,9 +266,9 @@ represented as a plain integer, in which case they yield a long integer.
 Integer literals with an ``'L'`` or ``'l'`` suffix yield long integers (``'L'``
 is preferred because ``1l`` looks too much like eleven!).  Numeric literals
 containing a decimal point or an exponent sign yield floating point numbers.
-Appending ``'j'`` or ``'J'`` to a numeric literal yields a complex number with a
-zero real part. A complex numeric literal is the sum of a real and an imaginary
-part.
+Appending ``'j'`` or ``'J'`` to a numeric literal yields an imaginary number
+(a complex number with a zero real part) which you can add to an integer or
+float to get a complex number with real and imaginary parts.
 
 .. index::
    single: arithmetic
@@ -1217,13 +1217,68 @@ string functions based on regular expressions.
    Line breaks are not included in the resulting list unless *keepends* is
    given and true.
 
-   For example, ``'ab c\n\nde fg\rkl\r\n'.splitlines()`` returns
-   ``['ab c', '', 'de fg', 'kl']``, while the same call with ``splitlines(True)``
-   returns ``['ab c\n', '\n', 'de fg\r', 'kl\r\n']``.
+   Python recognizes ``"\r"``, ``"\n"``, and ``"\r\n"`` as line boundaries for
+   8-bit strings.
+
+   For example::
+
+      >>> 'ab c\n\nde fg\rkl\r\n'.splitlines()
+      ['ab c', '', 'de fg', 'kl']
+      >>> 'ab c\n\nde fg\rkl\r\n'.splitlines(True)
+      ['ab c\n', '\n', 'de fg\r', 'kl\r\n']
 
    Unlike :meth:`~str.split` when a delimiter string *sep* is given, this
    method returns an empty list for the empty string, and a terminal line
-   break does not result in an extra line.
+   break does not result in an extra line::
+
+      >>> "".splitlines()
+      []
+      >>> "One line\n".splitlines()
+      ['One line']
+
+   For comparison, ``split('\n')`` gives::
+
+      >>> ''.split('\n')
+      ['']
+      >>> 'Two lines\n'.split('\n')
+      ['Two lines', '']
+
+.. method:: unicode.splitlines([keepends])
+
+   Return a list of the lines in the string, like :meth:`str.splitlines`.
+   However, the Unicode method splits on the following line boundaries,
+   which are a superset of the :term:`universal newlines` recognized for
+   8-bit strings.
+
+   +-----------------------+-----------------------------+
+   | Representation        | Description                 |
+   +=======================+=============================+
+   | ``\n``                | Line Feed                   |
+   +-----------------------+-----------------------------+
+   | ``\r``                | Carriage Return             |
+   +-----------------------+-----------------------------+
+   | ``\r\n``              | Carriage Return + Line Feed |
+   +-----------------------+-----------------------------+
+   | ``\v`` or ``\x0b``    | Line Tabulation             |
+   +-----------------------+-----------------------------+
+   | ``\f`` or ``\x0c``    | Form Feed                   |
+   +-----------------------+-----------------------------+
+   | ``\x1c``              | File Separator              |
+   +-----------------------+-----------------------------+
+   | ``\x1d``              | Group Separator             |
+   +-----------------------+-----------------------------+
+   | ``\x1e``              | Record Separator            |
+   +-----------------------+-----------------------------+
+   | ``\x85``              | Next Line (C1 Control Code) |
+   +-----------------------+-----------------------------+
+   | ``\u2028``            | Line Separator              |
+   +-----------------------+-----------------------------+
+   | ``\u2029``            | Paragraph Separator         |
+   +-----------------------+-----------------------------+
+
+   .. versionchanged:: 2.7
+
+      ``\v`` and ``\f`` added to list of line boundaries.
 
 
 .. method:: str.startswith(prefix[, start[, end]])
@@ -1615,8 +1670,8 @@ an arbitrary object):
 | ``s.append(x)``              | same as ``s[len(s):len(s)] =   | \(2)                |
 |                              | [x]``                          |                     |
 +------------------------------+--------------------------------+---------------------+
-| ``s.extend(x)`` or           | for the most part the same as  | \(3)                |
-| ``s += t``                   | ``s[len(s):len(s)] = x``       |                     |
+| ``s.extend(t)`` or           | for the most part the same as  | \(3)                |
+| ``s += t``                   | ``s[len(s):len(s)] = t``       |                     |
 +------------------------------+--------------------------------+---------------------+
 | ``s *= n``                   | updates *s* with its contents  | \(11)               |
 |                              | repeated *n* times             |                     |
@@ -1653,7 +1708,7 @@ Notes:
    this misfeature has been deprecated since Python 1.4.
 
 (3)
-   *x* can be any iterable object.
+   *t* can be any iterable object.
 
 (4)
    Raises :exc:`ValueError` when *x* is not found in *s*. When a negative index is
@@ -1819,7 +1874,7 @@ The constructors for both classes work the same:
       Test whether the set is a proper superset of *other*, that is, ``set >=
       other and set != other``.
 
-   .. method:: union(other, ...)
+   .. method:: union(*others)
                set | other | ...
 
       Return a new set with elements from the set and all others.
@@ -1827,7 +1882,7 @@ The constructors for both classes work the same:
       .. versionchanged:: 2.6
          Accepts multiple input iterables.
 
-   .. method:: intersection(other, ...)
+   .. method:: intersection(*others)
                set & other & ...
 
       Return a new set with elements common to the set and all others.
@@ -1835,7 +1890,7 @@ The constructors for both classes work the same:
       .. versionchanged:: 2.6
          Accepts multiple input iterables.
 
-   .. method:: difference(other, ...)
+   .. method:: difference(*others)
                set - other - ...
 
       Return a new set with elements in the set that are not in the others.
@@ -1889,7 +1944,7 @@ The constructors for both classes work the same:
    The following table lists operations available for :class:`set` that do not
    apply to immutable instances of :class:`frozenset`:
 
-   .. method:: update(other, ...)
+   .. method:: update(*others)
                set |= other | ...
 
       Update the set, adding elements from all others.
@@ -1897,7 +1952,7 @@ The constructors for both classes work the same:
       .. versionchanged:: 2.6
          Accepts multiple input iterables.
 
-   .. method:: intersection_update(other, ...)
+   .. method:: intersection_update(*others)
                set &= other & ...
 
       Update the set, keeping only elements found in it and all others.
@@ -1905,7 +1960,7 @@ The constructors for both classes work the same:
       .. versionchanged:: 2.6
          Accepts multiple input iterables.
 
-   .. method:: difference_update(other, ...)
+   .. method:: difference_update(*others)
                set -= other | ...
 
       Update the set, removing elements found in others.
@@ -2872,9 +2927,10 @@ an (external) *definition* for a module named *foo* somewhere.)
 A special attribute of every module is :attr:`~object.__dict__`. This is the
 dictionary containing the module's symbol table. Modifying this dictionary will
 actually change the module's symbol table, but direct assignment to the
-:attr:`__dict__` attribute is not possible (you can write
+:attr:`~object.__dict__` attribute is not possible (you can write
 ``m.__dict__['a'] = 1``, which defines ``m.a`` to be ``1``, but you can't write
-``m.__dict__ = {}``).  Modifying :attr:`__dict__` directly is not recommended.
+``m.__dict__ = {}``).  Modifying :attr:`~object.__dict__` directly is
+not recommended.
 
 Modules built into the interpreter are written like this: ``<module 'sys'
 (built-in)>``.  If loaded from a file, they are written as ``<module 'os' from
@@ -3101,9 +3157,10 @@ types, where they are relevant.  Some of these are not reported by the
    The tuple of base classes of a class object.
 
 
-.. attribute:: class.__name__
+.. attribute:: definition.__name__
 
-   The name of the class or type.
+   The name of the class, type, function, method, descriptor, or
+   generator instance.
 
 
 The following attributes are only supported by :term:`new-style class`\ es.

@@ -157,12 +157,12 @@ serve:
 
 # for development releases: always build
 autobuild-dev:
-	make dist SPHINXOPTS='-A daily=1 -A versionswitcher=1'
+	make dist SPHINXOPTS='$(SPHINXOPTS) -A daily=1 -A versionswitcher=1'
 	-make suspicious
 
 # for quick rebuilds (HTML only)
-autobuild-html:
-	make html SPHINXOPTS='-A daily=1 -A versionswitcher=1'
+autobuild-dev-html:
+	make html SPHINXOPTS='$(SPHINXOPTS) -A daily=1 -A versionswitcher=1'
 
 # for stable releases: only build if not in pre-release stage (alpha, beta)
 # release candidate downloads are okay, since the stable tree can be in that stage
@@ -173,3 +173,9 @@ autobuild-stable:
 	esac
 	@make autobuild-dev
 
+autobuild-stable-html:
+	@case $(DISTVERSION) in *[ab]*) \
+		echo "Not building; $(DISTVERSION) is not a release version."; \
+		exit 1;; \
+	esac
+	@make autobuild-dev-html

@@ -366,7 +366,7 @@ _ctypes_alloc_format_string_with_shape(int ndim, const Py_ssize_t *shape,
 
 /*
   PyCStructType_Type - a meta type/class.  Creating a new class using this one as
-  __metaclass__ will call the contructor StructUnionType_new.  It replaces the
+  __metaclass__ will call the constructor StructUnionType_new.  It replaces the
   tp_dict member with a new instance of StgDict, and initializes the C
   accessible fields somehow.
 */
@@ -501,7 +501,10 @@ CDataType_from_buffer(PyObject *type, PyObject *args)
     Py_ssize_t offset = 0;
     PyObject *obj, *result;
     StgDictObject *dict = PyType_stgdict(type);
-    assert (dict);
+    if (!dict) {
+        PyErr_SetString(PyExc_TypeError, "abstract class");
+        return NULL;
+    }
 
     if (!PyArg_ParseTuple(args,
 #if (PY_VERSION_HEX < 0x02050000)
@@ -557,13 +560,16 @@ CDataType_from_buffer_copy(PyObject *type, PyObject *args)
     Py_ssize_t offset = 0;
     PyObject *obj, *result;
     StgDictObject *dict = PyType_stgdict(type);
-    assert (dict);
+    if (!dict) {
+        PyErr_SetString(PyExc_TypeError, "abstract class");
+        return NULL;
+    }
 
     if (!PyArg_ParseTuple(args,
 #if (PY_VERSION_HEX < 0x02050000)
-                          "O|i:from_buffer",
+                          "O|i:from_buffer_copy",
 #else
-                          "O|n:from_buffer",
+                          "O|n:from_buffer_copy",
 #endif
                           &obj, &offset))
         return NULL;
@@ -1174,7 +1180,7 @@ CharArray_get_raw(CDataObject *self)
 static PyObject *
 CharArray_get_value(CDataObject *self)
 {
-    int i;
+    Py_ssize_t i;
     char *ptr = self->b_ptr;
     for (i = 0; i < self->b_size; ++i)
         if (*ptr++ == '\0')
@@ -1236,9 +1242,9 @@ static PyGetSetDef CharArray_getsets[] = {
 static PyObject *
 WCharArray_get_value(CDataObject *self)
 {
-    unsigned int i;
+    Py_ssize_t i;
     wchar_t *ptr = (wchar_t *)self->b_ptr;
-    for (i = 0; i < self->b_size/sizeof(wchar_t); ++i)
+    for (i = 0; i < self->b_size/(Py_ssize_t)sizeof(wchar_t); ++i)
         if (*ptr++ == (wchar_t)0)
             break;
     return PyUnicode_FromWideChar((wchar_t *)self->b_ptr, i);
@@ -1267,7 +1273,7 @@ WCharArray_set_value(CDataObject *self, PyObject *value)
         return -1;
     } else
         Py_INCREF(value);
-    if ((unsigned)PyUnicode_GET_SIZE(value) > self->b_size/sizeof(wchar_t)) {
+    if ((size_t)PyUnicode_GET_SIZE(value) > self->b_size/sizeof(wchar_t)) {
         PyErr_SetString(PyExc_ValueError,
                         "string too long");
         result = -1;
@@ -1308,8 +1314,10 @@ add_methods(PyTypeObject *type, PyMethodDef *meth)
         descr = PyDescr_NewMethod(type, meth);
         if (descr == NULL)
             return -1;
-        if (PyDict_SetItemString(dict,meth->ml_name, descr) < 0)
+        if (PyDict_SetItemString(dict, meth->ml_name, descr) < 0) {
+            Py_DECREF(descr);
             return -1;
+        }
         Py_DECREF(descr);
     }
     return 0;
@@ -1324,8 +1332,10 @@ add_members(PyTypeObject *type, PyMemberDef *memb)
         descr = PyDescr_NewMember(type, memb);
         if (descr == NULL)
             return -1;
-        if (PyDict_SetItemString(dict, memb->name, descr) < 0)
+        if (PyDict_SetItemString(dict, memb->name, descr) < 0) {
+            Py_DECREF(descr);
             return -1;
+        }
         Py_DECREF(descr);
     }
     return 0;
@@ -1341,8 +1351,10 @@ add_getset(PyTypeObject *type, PyGetSetDef *gsp)
         descr = PyDescr_NewGetSet(type, gsp);
         if (descr == NULL)
             return -1;
-        if (PyDict_SetItemString(dict, gsp->name, descr) < 0)
+        if (PyDict_SetItemString(dict, gsp->name, descr) < 0) {
+            Py_DECREF(descr);
             return -1;
+        }
         Py_DECREF(descr);
     }
     return 0;
@@ -1420,8 +1432,10 @@ PyCArrayType_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
         return NULL;
     }
     stgdict->shape[0] = length;
-    memmove(&stgdict->shape[1], itemdict->shape,
-        sizeof(Py_ssize_t) * (stgdict->ndim - 1));
+    if (stgdict->ndim > 1) {
+        memmove(&stgdict->shape[1], itemdict->shape,
+            sizeof(Py_ssize_t) * (stgdict->ndim - 1));
+    }
 
     itemsize = itemdict->size;
     if (length * itemsize < 0) {
@@ -1843,8 +1857,10 @@ static PyObject *CreateSwappedType(PyTypeObject *type, PyObject *args, PyObject 
 
     Py_INCREF(name);
     PyString_Concat(&name, suffix);
-    if (name == NULL)
+    if (name == NULL) {
+        Py_DECREF(swapped_args);
         return NULL;
+    }
 
     PyTuple_SET_ITEM(swapped_args, 0, name);
     for (i=1; i<PyTuple_GET_SIZE(args); ++i) {
@@ -1862,8 +1878,10 @@ static PyObject *CreateSwappedType(PyTypeObject *type, PyObject *args, PyObject 
 
     stgdict = (StgDictObject *)PyObject_CallObject(
         (PyObject *)&PyCStgDict_Type, NULL);
-    if (!stgdict) /* XXX leaks result! */
+    if (!stgdict) {
+        Py_DECREF(result);
         return NULL;
+    }
 
     stgdict->ffi_type_pointer = *fmt->pffi_type;
     stgdict->align = fmt->pffi_type->alignment;
@@ -2045,20 +2063,25 @@ PyCSimpleType_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
             PyObject *meth;
             int x;
             meth = PyDescr_NewClassMethod(result, ml);
-            if (!meth)
+            if (!meth) {
+                Py_DECREF(result);
                 return NULL;
+            }
 #else
 #error
             PyObject *meth, *func;
             int x;
             func = PyCFunction_New(ml, NULL);
-            if (!func)
+            if (!func) {
+                Py_DECREF(result);
                 return NULL;
+            }
             meth = PyObject_CallFunctionObjArgs(
                 (PyObject *)&PyClassMethod_Type,
                 func, NULL);
             Py_DECREF(func);
             if (!meth) {
+                Py_DECREF(result);
                 return NULL;
             }
 #endif
@@ -2241,8 +2264,10 @@ converters_from_argtypes(PyObject *ob)
 
     nArgs = PyTuple_GET_SIZE(ob);
     converters = PyTuple_New(nArgs);
-    if (!converters)
+    if (!converters) {
+        Py_DECREF(ob);
         return NULL;
+    }
 
     /* I have to check if this is correct. Using c_char, which has a size
        of 1, will be assumed to be pushed as only one byte!
@@ -3968,7 +3993,7 @@ PyCFuncPtr_call(PyCFuncPtrObject *self, PyObject *inargs, PyObject *kwds)
                                                    self,
                                                    callargs,
                                                    NULL);
-        /* If the errcheck funtion failed, return NULL.
+        /* If the errcheck function failed, return NULL.
            If the errcheck function returned callargs unchanged,
            continue normal processing.
            If the errcheck function returned something else,
@@ -5377,11 +5402,11 @@ comerror_init(PyObject *self, PyObject *args)
 
     a = PySequence_GetSlice(args, 1, PySequence_Size(args));
     if (!a)
-    return NULL;
+        return NULL;
     status = PyObject_SetAttrString(self, "args", a);
     Py_DECREF(a);
     if (status < 0)
-    return NULL;
+        return NULL;
 
     if (PyObject_SetAttrString(self, "hresult", hresult) < 0)
         return NULL;
@@ -5736,25 +5761,25 @@ PyObject *My_PyUnicode_FromWideChar(register const wchar_t *w,
     PyUnicodeObject *unicode;
 
     if (w == NULL) {
-    PyErr_BadInternalCall();
-    return NULL;
+        PyErr_BadInternalCall();
+        return NULL;
     }
 
     unicode = (PyUnicodeObject *)PyUnicode_FromUnicode(NULL, size);
     if (!unicode)
-    return NULL;
+        return NULL;
 
     /* Copy the wchar_t data into the new object */
 #ifdef HAVE_USABLE_WCHAR_T
     memcpy(unicode->str, w, size * sizeof(wchar_t));
 #else
     {
-    register Py_UNICODE *u;
-    register int i;
-    u = PyUnicode_AS_UNICODE(unicode);
-    /* In Python, the following line has a one-off error */
-    for (i = size; i > 0; i--)
-        *u++ = *w++;
+        register Py_UNICODE *u;
+        register int i;
+        u = PyUnicode_AS_UNICODE(unicode);
+        /* In Python, the following line has a one-off error */
+        for (i = size; i > 0; i--)
+            *u++ = *w++;
     }
 #endif
 
@@ -5766,21 +5791,21 @@ Py_ssize_t My_PyUnicode_AsWideChar(PyUnicodeObject *unicode,
                             Py_ssize_t size)
 {
     if (unicode == NULL) {
-    PyErr_BadInternalCall();
-    return -1;
+        PyErr_BadInternalCall();
+        return -1;
     }
     if (size > PyUnicode_GET_SIZE(unicode))
-    size = PyUnicode_GET_SIZE(unicode);
+        size = PyUnicode_GET_SIZE(unicode);
 #ifdef HAVE_USABLE_WCHAR_T
     memcpy(w, unicode->str, size * sizeof(wchar_t));
 #else
     {
-    register Py_UNICODE *u;
-    register int i;
-    u = PyUnicode_AS_UNICODE(unicode);
-    /* In Python, the following line has a one-off error */
-    for (i = size; i > 0; i--)
-        *w++ = *u++;
+        register Py_UNICODE *u;
+        register int i;
+        u = PyUnicode_AS_UNICODE(unicode);
+        /* In Python, the following line has a one-off error */
+        for (i = size; i > 0; i--)
+            *w++ = *u++;
     }
 #endif
 

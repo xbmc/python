@@ -95,8 +95,9 @@ attributes:
 |           | gi_code         | code object               |       |
 +-----------+-----------------+---------------------------+-------+
 |           | gi_frame        | frame object or possibly  |       |
-|           |                 | None once the generator   |       |
-|           |                 | has been exhausted        |       |
+|           |                 | ``None`` once the         |       |
+|           |                 | generator has been        |       |
+|           |                 | exhausted                 |       |
 +-----------+-----------------+---------------------------+-------+
 |           | gi_running      | set to 1 when generator   |       |
 |           |                 | is executing, 0 otherwise |       |
@@ -335,9 +336,11 @@ Note:
    are true.
 
    This is new as of Python 2.2, and, for example, is true of
-   ``int.__add__``. An object passing this test has a :attr:`__get__` attribute
-   but not a :attr:`__set__` attribute, but beyond that the set of attributes
-   varies.  :attr:`__name__` is usually sensible, and :attr:`__doc__` often is.
+   ``int.__add__``. An object passing this test
+   has a :meth:`~object.__get__` method but not a :meth:`~object.__set__`
+   method, but beyond that the set of attributes varies.  A
+   :attr:`~definition.__name__` attribute is usually
+   sensible, and :attr:`__doc__` often is.
 
    Methods implemented via descriptors that also pass one of the other tests
    return false from the :func:`ismethoddescriptor` test, simply because the
@@ -349,11 +352,11 @@ Note:
 
    Return true if the object is a data descriptor.
 
-   Data descriptors have both a :attr:`__get__` and a :attr:`__set__` attribute.
+   Data descriptors have both a :attr:`~object.__get__` and a :attr:`~object.__set__` method.
    Examples are properties (defined in Python), getsets, and members.  The
    latter two are defined in C and there are more specific tests available for
    those types, which is robust across Python implementations.  Typically, data
-   descriptors will also have :attr:`__name__` and :attr:`__doc__` attributes
+   descriptors will also have :attr:`~definition.__name__` and :attr:`__doc__` attributes
    (properties, getsets, and members have both of these attributes), but this is
    not guaranteed.
 
@@ -476,7 +479,7 @@ Classes and functions
    four things is returned: ``(args, varargs, keywords, defaults)``. *args* is a
    list of the argument names (it may contain nested lists). *varargs* and
    *keywords* are the names of the ``*`` and ``**`` arguments or
-   ``None``. *defaults* is a tuple of default argument values or None if there
+   ``None``. *defaults* is a tuple of default argument values or ``None`` if there
    are no default arguments; if this tuple has *n* elements, they correspond to
    the last *n* elements listed in *args*.
 

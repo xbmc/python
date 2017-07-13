@@ -66,10 +66,11 @@ static const char libedit_version_tag[] = "EditLine wrapper";
 static int libedit_history_start = 0;
 #endif /* __APPLE__ */
 
+#ifdef HAVE_RL_COMPLETION_DISPLAY_MATCHES_HOOK
 static void
 on_completion_display_matches_hook(char **matches,
                                    int num_matches, int max_length);
-
+#endif
 
 /* Memory allocated for rl_completer_word_break_characters
    (see issue #17289 for the motivation). */
@@ -774,6 +775,7 @@ on_pre_input_hook()
 
 /* C function to call the Python completion_display_matches */
 
+#ifdef HAVE_RL_COMPLETION_DISPLAY_MATCHES_HOOK
 static void
 on_completion_display_matches_hook(char **matches,
                                    int num_matches, int max_length)
@@ -816,6 +818,7 @@ on_completion_display_matches_hook(char **matches,
 #endif
 }
 
+#endif
 
 #ifdef HAVE_RL_RESIZE_TERMINAL
 static volatile sig_atomic_t sigwinch_received;
@@ -958,19 +961,22 @@ setup_readline(void)
     begidx = PyInt_FromLong(0L);
     endidx = PyInt_FromLong(0L);
 
-#ifndef __APPLE__
-    if (!isatty(STDOUT_FILENO)) {
-        /* Issue #19884: stdout is not a terminal. Disable meta modifier
-           keys to not write the ANSI sequence "\033[1034h" into stdout. On
-           terminals supporting 8 bit characters like TERM=xterm-256color
-           (which is now the default Fedora since Fedora 18), the meta key is
-           used to enable support of 8 bit characters (ANSI sequence
-           "\033[1034h").
-
-           With libedit, this call makes readline() crash. */
-        rl_variable_bind ("enable-meta-key", "off");
-    }
+#ifdef __APPLE__
+    if (!using_libedit_emulation)
 #endif
+    {
+        if (!isatty(STDOUT_FILENO)) {
+            /* Issue #19884: stdout is not a terminal. Disable meta modifier
+               keys to not write the ANSI sequence "\033[1034h" into stdout. On
+               terminals supporting 8 bit characters like TERM=xterm-256color
+               (which is now the default Fedora since Fedora 18), the meta key is
+               used to enable support of 8 bit characters (ANSI sequence
+               "\033[1034h").
+
+               With libedit, this call makes readline() crash. */
+            rl_variable_bind ("enable-meta-key", "off");
+        }
+    }
 
     /* Initialize (allows .inputrc to override)
      *
@@ -1141,7 +1147,7 @@ call_readline(FILE *sys_stdin, FILE *sys_stdout, char *prompt)
         return NULL;
     }
 
-    /* We got an EOF, return a empty string. */
+    /* We got an EOF, return an empty string. */
     if (p == NULL) {
         p = PyMem_Malloc(1);
         if (p != NULL)
