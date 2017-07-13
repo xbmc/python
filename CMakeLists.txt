@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.2)
 
-project(python VERSION 2.7.12 LANGUAGES C)
+project(python VERSION 2.7.13 LANGUAGES C)
 
 if(MSVC)
     set(CMAKE_DEBUG_POSTFIX "d")
 endif()
 
-add_library(python SHARED
+add_library(python27 SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/Include/abstract.h
     ${CMAKE_CURRENT_SOURCE_DIR}/Include/asdl.h
     ${CMAKE_CURRENT_SOURCE_DIR}/Include/ast.h
@@ -313,7 +313,7 @@ add_library(python SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/Modules/getbuildinfo.c
 )
 
-target_include_directories(python
+target_include_directories(python27
   PRIVATE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/PC>
@@ -325,7 +325,7 @@ target_include_directories(python
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Include>
 )
 
-target_compile_definitions(python
+target_compile_definitions(python27
   PRIVATE
   _CRT_SECURE_NO_WARNINGS
   _CRT_STDC_NO_DEPRECATE
@@ -337,13 +337,13 @@ target_compile_definitions(python
 # add_subdirectory(Modules/_ctypes)
 
 if(${CMAKE_SIZEOF_VOID_P} EQUAL 4)
-    add_custom_command(TARGET python
+    add_custom_command(TARGET python27
     PRE_BUILD
     COMMAND "C:/Program Files (x86)/MSBuild/14.0/Bin/amd64/MSBuild.exe" pcbuild.sln /p:Configuration=Release /p:Platform=win32
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/PCbuild
     )
 else()
-    add_custom_command(TARGET python
+    add_custom_command(TARGET python27
     PRE_BUILD
     COMMAND "C:/Program Files (x86)/MSBuild/14.0/Bin/amd64/MSBuild.exe" pcbuild.sln /p:Configuration=Release /p:Platform=x64
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/PCbuild
@@ -357,7 +357,7 @@ write_basic_package_version_file(
   COMPATIBILITY AnyNewerVersion
 )
 
-install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}
+install(TARGETS python27 EXPORT python27
   RUNTIME DESTINATION bin
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
@@ -395,7 +395,7 @@ install(DIRECTORY
     PATTERN idlelib EXCLUDE
 )
 
-install(EXPORT ${PROJECT_NAME}
+install(EXPORT python27
   FILE
   ${PROJECT_NAME}.cmake
   NAMESPACE
@@ -411,8 +411,13 @@ install(FILES
     lib/cmake/${PROJECT_NAME}
 )
 
-export(TARGETS ${PROJECT_NAME}
+export(TARGETS python27
   FILE
   ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake
   NAMESPACE ${PROJECT_NAME}::
+)
+
+install(FILES
+  $<TARGET_PDB_FILE:python27>
+  DESTINATION lib
 )

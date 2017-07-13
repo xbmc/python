@@ -39,3 +39,6 @@ externals/openssl-1.0.2j/tmp/
 *.pyd
 *.pyc
 build/
+.vscode/
+PCBuild/obj/
+python.bat
